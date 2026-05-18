@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Turismo Cochabamba — Buscador Semántico</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- Fondo decorativo -->
+  <div class="bg-orb bg-orb--1"></div>
+  <div class="bg-orb bg-orb--2"></div>
+  <div class="bg-grain"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="header-badge">Web Semántica · Grupo 21 · UMSS</span>
+    </div>
+  </header>
+
+  <main class="hero">
+    <div class="hero-content">
+
+      <div class="hero-label">Metabuscador Semántico</div>
+      <h1 class="hero-title">
+        Descubre<br/>
+        <em>Cochabamba</em>
+      </h1>
+      <p class="hero-sub">Consulta nuestra ontología OWL de turismo local y encuentra atractivos, servicios, gastronomía y más.</p>
+
+      <!-- Barra de búsqueda (Task #5) -->
+      <div class="search-wrapper">
+        <div class="search-bar">
+          <span class="search-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Ej: museos gratuitos, hoteles, senderismo…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="searchBtn" class="btn-search">
+            Buscar
+          </button>
+        </div>
+
+        <!-- Chips de búsqueda rápida -->
+        <div class="quick-chips">
+          <button class="chip" data-query="Atractivos naturales">🌿 Naturales</button>
+          <button class="chip" data-query="Museos históricos">🏛️ Museos</button>
+          <button class="chip" data-query="Gastronomía típica">🍲 Gastronomía</button>
+          <button class="chip" data-query="Hospedaje disponible">🛏️ Hospedaje</button>
+          <button class="chip" data-query="Eventos y festividades">🎉 Eventos</button>
+        </div>
+      </div>
+
+      <!-- Selector de idioma (multilingualidad semántica) -->
+      <div class="lang-selector">
+        <span class="lang-label">Idioma:</span>
+        <button class="lang-btn active" data-lang="es">ES</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="qu">QU</button>
+      </div>
+
+    </div>
+
+    <!-- Estadísticas de la ontología -->
+    <div class="stats-strip">
+      <div class="stat">
+        <span class="stat-num">120+</span>
+        <span class="stat-label">Instancias</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">11</span>
+        <span class="stat-label">Clases OWL</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">40</span>
+        <span class="stat-label">Consultas DL</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Idiomas</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Contenedor de resultados (Task #5) -->
+  <section class="results-section">
+    <div id="resultados" class="results-grid"></div>
+  </section>
+
+  <!-- Estado vacío (visible por defecto) -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">◈</div>
+    <p>Ingresa un término para explorar la ontología</p>
+  </div>
+<script src="script.js"></script>
+
+</body>
+</html>
