@@ -1,0 +1,23 @@
+{
+  "name": "buscadorsemantico",
+  "version": "1.0.0",
+  "description": "Buscador Semántico desarrollado con HTML, CSS y JavaScript que implementa tecnologías de la Web Semántica (OWL, RDF, SPARQL), multilingualidad y poblamiento de datos desde DBpedia. Proyecto académico para la materia de Web Semántica.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alfredoronald/BuscadorSemantico.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alfredoronald/BuscadorSemantico/issues"
+  },
+  "homepage": "https://github.com/alfredoronald/BuscadorSemantico#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

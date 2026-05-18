@@ -1,23 +1,19 @@
-
-// ── Configuración del Servidor Backend ──────────────────────
 const BASE_URL = "http://localhost:3000/api/search";
-
-// ── Diccionario de Traducciones (Multilingualidad) ──────────
+    // ── Traducciones ──
 const translations = {
-  es: { search: "Buscar", placeholder: "Ej: museos gratuitos, hoteles, senderismo…", free: "Gratuito", notFree: "Con costo", accessible: "Accesible", schedule: "Horario", noResults: "Sin resultados para", try: "Intenta con otro término.", loading: "Buscando en la ontología..." },
-  en: { search: "Search", placeholder: "E.g.: free museums, hotels, hiking…", free: "Free", notFree: "Paid", accessible: "Accessible", schedule: "Schedule", noResults: "No results for", try: "Try another term.", loading: "Searching ontology..." },
-  qu: { search: "Mask'ay", placeholder: "Ej: wakin museo, hotel, puriy…", free: "Qullqi mana", notFree: "Qullqiwan", accessible: "Yaykuna atikuq", schedule: "Pacha", noResults: "Mana tarikuchu:", try: "Waq simiwan mask'ay.", loading: "Ontologíapi mask'ashan..." },
+  es: { search: "Buscar", placeholder: "Ej: museos gratuitos, hoteles, senderismo…", free: "Gratuito", notFree: "Con costo", accessible: "Accesible", schedule: "Horario", noResults: "Sin resultados para", try: "Intenta con otro término." },
+  en: { search: "Search", placeholder: "E.g.: free museums, hotels, hiking…", free: "Free", notFree: "Paid", accessible: "Accessible", schedule: "Schedule", noResults: "No results for", try: "Try another term." },
+  qu: { search: "Mask'ay", placeholder: "Ej: wakin museo, hotel, puriy…", free: "Qullqi mana", notFree: "Qullqiwan", accessible: "Yaykuna atikuq", schedule: "Pacha", noResults: "Mana tarikuchu:", try: "Waq simiwan mask'ay." },
 };
 
 let currentLang = "es";
 
-// ── Selección de Elementos del DOM ──────────────────────────
 const input = document.getElementById("searchInput");
 const btn = document.getElementById("searchBtn");
 const resultsContainer = document.getElementById("resultados");
 const emptyState = document.getElementById("emptyState");
 
-// ── Configuración Visual: Colores por Clase Ontológica ──────
+// ── Colores por clase (igual que antes) ──
 const claseColors = {
   Atractivo_Natural: "#2d6a4f",
   Atractivo_Cultural_Histórico: "#7b3f00",
@@ -34,116 +30,114 @@ function getColor(clase) {
   return claseColors[clase] || "#333";
 }
 
-// ── Renderizado de Tarjetas de Resultados ───────────────────
+// ── Seguridad: escapar HTML ──
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+// ── Renderizar una tarjeta con datos reales ──
 function renderCard(item, t) {
   const color = getColor(item.clase);
-  const claseLabel = item.clase ? item.clase.replace(/_/g, " ") : "Turismo";
-  
+  const claseLabel = (item.clase || '').replace(/_/g, ' ');
   return `
     <article class="result-card" style="--accent:${color}">
-      <div class="card-clase">${claseLabel}</div>
-      <h3 class="card-nombre">${item.nombre}</h3>
-      <p class="card-tipo">${item.tipo || ''}</p>
+      <div class="card-clase">${escapeHtml(claseLabel)}</div>
+      <h3 class="card-nombre">${escapeHtml(item.nombre)}</h3>
+      <p class="card-tipo">${escapeHtml(item.tipo || '')}</p>
+      ${item.ubicacion ? `<p class="card-ubicacion"> ${escapeHtml(item.ubicacion)}</p>` : ''}
+      ${item.descripcion ? `<p class="card-descripcion">${escapeHtml(item.descripcion)}</p>` : ''}
       <div class="card-meta">
-        ${item.gratuito !== undefined && item.gratuito !== null ? `<span class="badge ${item.gratuito ? 'badge--free' : 'badge--paid'}">${item.gratuito ? t.free : t.notFree}</span>` : ''}
-        ${item.accesibilidad ? `<span class="badge badge--access">♿ ${t.accessible}</span>` : ''}
-        ${item.horario ? `<span class="badge badge--time">⏰ ${item.horario}</span>` : ''}
+        ${item.gratuito !== undefined && item.gratuito !== null ? 
+          `<span class="badge ${item.gratuito ? 'badge--free' : 'badge--paid'}">${item.gratuito ? t.free : t.notFree}</span>` : ''}
+        ${item.accesibilidad === true ? `<span class="badge badge--access"> ${t.accessible}</span>` : ''}
+        ${item.horario ? `<span class="badge badge--time"> ${escapeHtml(item.horario)}</span>` : ''}
       </div>
     </article>`;
 }
 
-// ── FUNCIÓN PRINCIPAL: Búsqueda Asíncrona al Backend ────────
+// ── Búsqueda real contra el backend ──
 async function doSearch() {
   const q = input.value.trim().toLowerCase();
   const t = translations[currentLang];
-  
-  // Si el input está vacío, limpiamos contenedor y mostramos estado inicial
-  if (!q) { 
-    resultsContainer.innerHTML = ""; 
-    if (emptyState) emptyState.style.display = "flex"; 
-    return; 
+
+  // Limpiar resultados anteriores
+  resultsContainer.innerHTML = '';
+
+  if (!q) {
+    emptyState.style.display = "flex";
+    return;
   }
 
-  if (emptyState) emptyState.style.display = "none";
-  
-  // Feedback visual de carga momentáneo
-  resultsContainer.innerHTML = `<div class="loading-state">${t.loading}</div>`;
+  emptyState.style.display = "none";
+  resultsContainer.innerHTML = '<div class="loading">🔍 Buscando...</div>';
 
   try {
-    // Petición HTTP GET asíncrona a nuestro servidor Express con el parámetro 'q'
-    const urlCompleta = `${BASE_URL}?q=${encodeURIComponent(q)}`;
-    const response = await fetch(urlCompleta);
-
-    if (!response.ok) {
-      throw new Error(`Error en la respuesta del servidor: ${response.status}`);
-    }
-
-    // Parseamos la respuesta JSON estructurada por el backend
+    const response = await fetch(`${BASE_URL}?q=${encodeURIComponent(q)}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
     const data = await response.json();
-    const matches = data.resultados || [];
+    const resultados = data.resultados || [];
 
-    // Si el backend no encontró coincidencias en la ontología
-    if (!matches.length) {
+    if (resultados.length === 0) {
       resultsContainer.innerHTML = `
         <div class="no-results">
-          <span>${t.noResults} "<strong>${input.value}</strong>".</span>
+          <span>${t.noResults} "<strong>${escapeHtml(input.value)}</strong>".</span>
           <span>${t.try}</span>
         </div>`;
       return;
     }
 
-    // Inyectamos las tarjetas construidas dinámicamente con los datos de la ontología real
-    resultsContainer.innerHTML = matches.map(m => renderCard(m, t)).join('');
-    
-    // Ejecución de la animación de entrada para cada tarjeta (Card Enter)
+    // Generar HTML de todas las tarjetas
+    resultsContainer.innerHTML = resultados.map(item => renderCard(item, t)).join('');
+
+    // Aplicar animación de entrada
     resultsContainer.querySelectorAll('.result-card').forEach((card, i) => {
       card.style.animationDelay = `${i * 60}ms`;
       card.classList.add('card-enter');
     });
 
   } catch (error) {
-    console.error("Error en la conexión semántica:", error);
+    console.error("Error en la búsqueda:", error);
     resultsContainer.innerHTML = `
-      <div class="error-state">
-        ⚠️ No se pudo conectar con el motor semántico. Asegúrate de que el servidor esté corriendo.
+      <div class="no-results">
+        Error de conexión. ¿El servidor backend está corriendo en http://localhost:3000?
       </div>`;
   }
 }
 
-// ── Captura de Eventos de Usuario ───────────────────────────
+// ── Event listeners ──
+btn.addEventListener("click", doSearch);
+input.addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
 
-// Clic en el botón de búsqueda
-if (btn) btn.addEventListener("click", doSearch);
-
-// Presionar Enter en el campo de texto
-if (input) input.addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
-
-// Configuración de los Chips de Búsqueda Rápida
+// Chips de búsqueda rápida
 document.querySelectorAll(".chip").forEach(chip => {
   chip.addEventListener("click", () => {
     input.value = chip.dataset.query;
     doSearch();
-    const resultsSection = document.querySelector(".results-section");
-    if (resultsSection) {
-      resultsSection.scrollIntoView({ behavior: "smooth" });
-    }
+    document.querySelector(".results-section")?.scrollIntoView({ behavior: "smooth" });
   });
 });
 
-// Selector e Intercambiador de Idiomas (Multilingualidad)
+// Cambio de idioma
 document.querySelectorAll(".lang-btn").forEach(lb => {
   lb.addEventListener("click", () => {
     document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
     lb.classList.add("active");
-    
     currentLang = lb.dataset.lang;
     const t = translations[currentLang];
-    
-    // Actualizamos los textos de la interfaz dinámicamente
-    if (input) input.placeholder = t.placeholder;
-    if (btn) btn.textContent = t.search;
-    
-    // Si ya había un texto escrito, relanza la búsqueda inmediatamente con las etiquetas del nuevo idioma
-    if (input && input.value.trim()) doSearch();
+    input.placeholder = t.placeholder;
+    btn.textContent = t.search;
+    if (input.value.trim()) doSearch();
   });
 });
+
+// Inicializar placeholder y botón con idioma por defecto
+const t0 = translations.es;
+input.placeholder = t0.placeholder;
+btn.textContent = t0.search;
