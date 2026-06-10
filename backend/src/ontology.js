@@ -1,7 +1,7 @@
 // backend/src/ontology.js
-// VERSIÓN COMPLETA - Búsqueda semántica con soporte BILINGÜE (Español/Inglés)
 
-const fs = require("fs");
+
+const fs   = require("fs");
 const path = require("path");
 const $rdf = require("rdflib");
 
@@ -12,9 +12,6 @@ const OWL  = "http://www.w3.org/2002/07/owl#";
 let store  = null;
 let loaded = false;
 
-// ============================================================
-// CARGA DE ONTOLOGÍA
-// ============================================================
 function cargarOntologia() {
   if (loaded) return;
   const owlPath = path.join(__dirname, "../data/TurismoLocal.owl");
@@ -22,9 +19,8 @@ function cargarOntologia() {
     console.error(`❌ Archivo OWL no encontrado: ${owlPath}`);
     process.exit(1);
   }
-  const fixedPath   = owlPath.replace(/\\/g, "/").replace(/ /g, "%20");
-  const owlPathUrl  = "file:///" + fixedPath;
-  const contenido   = fs.readFileSync(owlPath, "utf-8");
+  const owlPathUrl = "file:///" + owlPath.replace(/\\/g, "/").replace(/ /g, "%20");
+  const contenido  = fs.readFileSync(owlPath, "utf-8");
   store = $rdf.graph();
   try {
     $rdf.parse(contenido, store, owlPathUrl, "application/rdf+xml");
@@ -36,754 +32,620 @@ function cargarOntologia() {
   loaded = true;
 }
 
-// ============================================================
-// NORMALIZACIÓN DE TEXTO
-// ============================================================
 function normalizar(str) {
   if (!str) return "";
-  return str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  return str.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
 }
 
-// Distancia de Levenshtein
 function levenshtein(a, b) {
   const m = a.length, n = b.length;
-  const dp = Array.from({ length: m + 1 }, (_, i) =>
-    Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
-  );
-  for (let i = 1; i <= m; i++)
-    for (let j = 1; j <= n; j++)
-      dp[i][j] = a[i-1] === b[j-1]
-        ? dp[i-1][j-1]
-        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  const dp = Array.from({ length: m+1 }, (_, i) =>
+    Array.from({ length: n+1 }, (_, j) => i===0 ? j : j===0 ? i : 0));
+  for (let i=1; i<=m; i++)
+    for (let j=1; j<=n; j++)
+      dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
   return dp[m][n];
 }
 
-function similares(a, b) {
-  const na = normalizar(a), nb = normalizar(b);
-  if (na === nb) return true;
-  if (na.includes(nb) || nb.includes(na)) return true;
-  const maxDist = nb.length <= 5 ? 1 : 2;
-  return levenshtein(na, nb) <= maxDist;
-}
-
 // ============================================================
-// DICCIONARIO BILINGÜE (Español ↔ Inglés)
+// DICCIONARIO COMPLETO TRILINGÜE
 // ============================================================
-const DICCIONARIO_BILINGUE = {
-  // Gratuitos
-  "free": "gratuito",
-  "gratis": "gratuito",
-  "gratuito": "gratuito",
-  "free places": "lugares gratuitos",
-  "free entry": "entrada gratis",
-  
-  // Museos
-  "museums": "museos",
-  "museum": "museos",
-  "museo": "museos",
-  "museos": "museos",
-  
-  // Hospedaje
-  "hotels": "hospedaje",
-  "hotel": "hospedaje",
-  "hostels": "hospedaje",
-  "hostel": "hospedaje",
-  "hospedaje": "hospedaje",
-  "lodging": "hospedaje",
-  "accommodation": "hospedaje",
-  
-  // Restaurantes
-  "restaurants": "restaurante",
-  "restaurant": "restaurante",
-  "restaurante": "restaurante",
-  
-  // Parques
-  "parks": "parques",
-  "park": "parques",
-  "parque": "parques",
-  "parques": "parques",
-  
-  // Senderismo
-  "hiking": "senderismo",
-  "trekking": "senderismo",
-  "senderismo": "senderismo",
-  
-  // Transporte
-  "transport": "transporte",
-  "transportation": "transporte",
-  "transporte": "transporte",
-  
-  // Eventos
-  "events": "eventos",
-  "event": "eventos",
-  "festivals": "eventos",
-  "festival": "eventos",
-  "evento": "eventos",
-  "eventos": "eventos",
-  
-  // Iglesias
-  "churches": "iglesias",
-  "church": "iglesias",
-  "cathedral": "iglesias",
-  "iglesia": "iglesias",
-  "iglesias": "iglesias",
-  
-  // Gastronomía
-  "food": "gastronomia",
-  "typical food": "gastronomia",
-  "local food": "gastronomia",
-  "dishes": "gastronomia",
-  "gastronomia": "gastronomia",
-  "platos tipicos": "gastronomia",
-  
-  // Accesibilidad
-  "accessible": "accesible",
-  "wheelchair": "accesible",
-  "accesible": "accesible",
-  
-  // Arqueológico
-  "archaeological": "arqueologico",
-  "ruins": "arqueologico",
-  "arqueologico": "arqueologico",
-  
-  // Familia
-  "family": "familia",
-  "family friendly": "familia",
-  "kids": "familia",
-  "children": "familia",
-  "familia": "familia",
-  
-  // Miradores
-  "viewpoint": "mirador",
-  "viewpoints": "mirador",
-  "mirador": "mirador",
-  
-  // Natural
-  "natural": "natural",
-  "nature": "natural",
-  
-  // Ferias
-  "fair": "feria",
-  "fairs": "feria",
-  "artisan fair": "feria",
-  "feria": "feria"
+const DICCIONARIO = {
+  // ESPAÑOL
+  "gratuito":"gratuito","gratis":"gratuito","sin costo":"gratuito","entrada gratis":"gratuito","entrada libre":"gratuito","lugares gratuitos":"gratuito",
+  "museo":"museo","museos":"museos","cultural":"cultural",
+  "hotel":"hotel","hoteles":"hoteles","hospedaje":"hospedaje","alojamiento":"hospedaje","hostal":"hostal",
+  "restaurante":"restaurante","restaurantes":"restaurantes","comer":"restaurante","comida":"comida",
+  "plato tipico":"gastronomia","platos tipicos":"gastronomia","comida tipica":"gastronomia","degustar":"gastronomia",
+  "parque":"parque","parques":"parques","jardin":"parque","jardines":"parque","area verde":"parque",
+  "natural":"natural","naturaleza":"natural","paisaje":"natural","cerro":"natural","laguna":"natural","lago":"natural","rio":"natural","montaña":"natural","bosque":"natural","atractivos naturales":"natural",
+  "senderismo":"senderismo","sendero":"senderismo","caminata":"senderismo","trekking":"senderismo","rutas de senderismo":"senderismo",
+  "mirador":"mirador","vista":"panoramico","cerros":"mirador","punto panoramico":"mirador",
+  "iglesia":"iglesia","iglesias":"iglesia","catedral":"iglesia","convento":"iglesia","templo":"iglesia",
+  "evento":"evento","eventos":"evento","festividad":"evento","festividades":"evento","feria":"evento","festival":"evento","celebracion":"evento",
+  "transporte":"transporte","bus":"transporte","taxi":"transporte","micro":"transporte","tren":"transporte","teleferico":"transporte","medios de transporte":"transporte",
+  "accesible":"accesible","accesibilidad":"accesible","silla de ruedas":"accesible","discapacidad":"accesible","movilidad reducida":"accesible",
+  "arqueologico":"arqueologico","ruinas":"arqueologico","inca":"arqueologico",
+  "familia":"familia","familias":"familia","niños":"familia","infantil":"familia","recomendados para familias":"familia",
+  "monumento":"cultural","monumentos":"cultural","historico":"cultural","historicos":"cultural","patrimonio":"cultural","puntos de interes":"cultural",
+  "feria artesanal":"evento","ferias artesanales":"evento","artesania":"evento",
+  // INGLÉS
+  "free":"gratuito","free entry":"gratuito","no cost":"gratuito",
+  "museum":"museo","museums":"museos",
+  "hotel":"hotel","hotels":"hoteles","accommodation":"hospedaje","lodging":"hospedaje",
+  "restaurant":"restaurante","restaurants":"restaurantes","eat":"restaurante",
+  "typical food":"gastronomia","local dish":"gastronomia","try":"gastronomia",
+  "park":"parque","parks":"parques","garden":"parque",
+  "nature":"natural","natural":"natural","mountain":"natural","lake":"natural","river":"natural","forest":"natural",
+  "hiking":"senderismo","trekking":"senderismo","trail":"senderismo",
+  "viewpoint":"mirador","view":"mirador","hill":"mirador","lookout":"mirador",
+  "church":"iglesia","churches":"iglesias","cathedral":"iglesia",
+  "event":"evento","events":"eventos","festival":"evento","fair":"evento","celebration":"evento",
+  "transport":"transporte","transportation":"transporte","bus":"transporte","taxi":"transporte","train":"transporte",
+  "accessible":"accesible","wheelchair":"accesible","disability":"accesible",
+  "ruins":"arqueologico","archaeological":"arqueologico",
+  "family":"familia","kids":"familia","children":"familia","recommended for families":"familia",
+  "monument":"cultural","monuments":"cultural","historical":"cultural","heritage":"cultural",
+  "craft fair":"evento","craft fairs":"evento",
+  // ITALIANO
+  "gratuito":"gratuito","ingresso libero":"gratuito","senza costo":"gratuito",
+  "museo":"museo","musei":"museos",
+  "hotel":"hotel","albergo":"hospedaje","alloggio":"hospedaje","dove dormire":"hospedaje",
+  "ristorante":"restaurante","ristoranti":"restaurantes","mangiare":"restaurante",
+  "piatto tipico":"gastronomia","piatti tipici":"gastronomia","cucina locale":"gastronomia","assaggiare":"gastronomia",
+  "parco":"parque","parchi":"parques","giardino":"parque",
+  "natura":"natural","naturale":"natural","paesaggio":"natural","montagna":"natural","lago":"natural","fiume":"natural","bosco":"natural","attrazioni naturali":"natural",
+  "sentiero":"senderismo","escursione":"senderismo","camminata":"senderismo","percorsi di trekking":"senderismo",
+  "belvedere":"mirador","vista":"mirador","panoramico":"mirador","collina":"mirador","punto panoramico":"mirador",
+  "chiesa":"iglesia","chiese":"iglesias","cattedrale":"iglesia",
+  "evento":"evento","eventi":"eventos","festa":"evento","fiera":"evento","celebrazione":"evento","festività":"evento",
+  "trasporto":"transporte","bus":"transporte","taxi":"transporte","treno":"transporte","mezzi di trasporto":"transporte",
+  "accessibile":"accesible","sedia a rotelle":"accesible","disabilità":"accesible",
+  "rovine":"arqueologico","archeologico":"arqueologico","scavi":"arqueologico",
+  "famiglia":"familia","bambini":"familia","consigliato per famiglie":"familia",
+  "monumento":"cultural","monumenti":"cultural","storico":"cultural","patrimonio":"cultural","punti di interesse":"cultural",
+  "fiera artigianale":"evento","fiere artigianali":"evento","artigianato":"evento"
 };
 
 function traducirConsulta(query) {
-  const lowerQuery = query.toLowerCase().trim();
-  
-  // Traducción directa
-  if (DICCIONARIO_BILINGUE[lowerQuery]) {
-    console.log(`🌐 Traduciendo: "${query}" → "${DICCIONARIO_BILINGUE[lowerQuery]}"`);
-    return DICCIONARIO_BILINGUE[lowerQuery];
-  }
-  
-  // Traducción de frases
-  const palabras = lowerQuery.split(" ");
-  if (palabras.length > 1) {
-    const traducidas = palabras.map(p => DICCIONARIO_BILINGUE[p] || p);
-    const resultado = traducidas.join(" ");
-    if (resultado !== lowerQuery) {
-      console.log(`🌐 Traducción frase: "${query}" → "${resultado}"`);
-      return resultado;
-    }
-  }
-  
-  return query;
+  const lower = query.toLowerCase().trim();
+  if (DICCIONARIO[lower]) return DICCIONARIO[lower];
+  const palabras = lower.split(" ");
+  const traducidas = palabras.map(p => DICCIONARIO[p] || p);
+  return traducidas.join(" ");
 }
 
 // ============================================================
-// DICCIONARIO DE INTENCIONES (MEJORADO CON INGLÉS)
+// FUNCIONES ESPECÍFICAS
+// ============================================================
+
+function buscarMuseosEspecifico() {
+  const resultados = [];
+  const excluirPalabras = ["catedral","iglesia","convento","templo","basilica","capilla","parroquia"];
+  
+  for (const st of todosLosIndividuos()) {
+    const props = obtenerPropiedades(st.subject);
+    const nombre = getProp(props, "Nombre") || "";
+    const tipoPatrimonio = getProp(props, "Tipo_Patrimonio") || "";
+    const descripcion = getProp(props, "Descripcion") || "";
+    
+    const esMuseo = 
+      tipoPatrimonio.toLowerCase().includes("museo") ||
+      tipoPatrimonio.toLowerCase().includes("museístico") ||
+      nombre.toLowerCase().includes("museo") ||
+      descripcion.toLowerCase().includes("museo");
+    
+    let esReligioso = false;
+    for (const palabra of excluirPalabras) {
+      if (nombre.toLowerCase().includes(palabra) || 
+          tipoPatrimonio.toLowerCase().includes(palabra) ||
+          descripcion.toLowerCase().includes(palabra)) {
+        esReligioso = true;
+        break;
+      }
+    }
+    
+    if (esMuseo && !esReligioso) {
+      resultados.push(normalizarEntidad(st.subject.value, props));
+    }
+  }
+  return resultados;
+}
+
+function buscarIglesiasEspecifico() {
+  const resultados = [];
+  for (const st of todosLosIndividuos()) {
+    const props = obtenerPropiedades(st.subject);
+    const nombre = getProp(props, "Nombre") || "";
+    const tipoPatrimonio = getProp(props, "Tipo_Patrimonio") || "";
+    const descripcion = getProp(props, "Descripcion") || "";
+    
+    const esIglesia = 
+      tipoPatrimonio.toLowerCase().includes("religiosa") ||
+      nombre.toLowerCase().includes("iglesia") ||
+      nombre.toLowerCase().includes("catedral") ||
+      nombre.toLowerCase().includes("convento") ||
+      nombre.toLowerCase().includes("templo") ||
+      descripcion.toLowerCase().includes("iglesia");
+    
+    if (esIglesia) {
+      resultados.push(normalizarEntidad(st.subject.value, props));
+    }
+  }
+  return resultados;
+}
+
+function buscarParquesEspecifico() {
+  const resultados = [];
+  const palabrasParque = ["parque","jardin","jardín","kanata","cretácico","familia","mariscal","educación","skatepark","park","giardino"];
+  
+  for (const st of todosLosIndividuos()) {
+    const props = obtenerPropiedades(st.subject);
+    const nombre = getProp(props, "Nombre") || "";
+    const tipoRecreacion = getProp(props, "Tipo_Recreacion") || "";
+    const descripcion = getProp(props, "Descripcion") || "";
+    
+    let esParque = false;
+    for (const palabra of palabrasParque) {
+      if (nombre.toLowerCase().includes(palabra) ||
+          tipoRecreacion.toLowerCase().includes(palabra) ||
+          descripcion.toLowerCase().includes(palabra)) {
+        esParque = true;
+        break;
+      }
+    }
+    
+    if (!esParque) {
+      const clase = props._tipos?.join(" ") || "";
+      if (clase.includes("Atractivo_Recreativo") && 
+          (nombre.toLowerCase().includes("parque") || nombre.toLowerCase().includes("park"))) {
+        esParque = true;
+      }
+    }
+    
+    if (esParque) {
+      resultados.push(normalizarEntidad(st.subject.value, props));
+    }
+  }
+  return resultados;
+}
+
+function buscarTeatrosEspecifico() {
+  const resultados = [];
+  for (const st of todosLosIndividuos()) {
+    const props = obtenerPropiedades(st.subject);
+    const nombre = getProp(props, "Nombre") || "";
+    const tipoPatrimonio = getProp(props, "Tipo_Patrimonio") || "";
+    
+    const esTeatro = 
+      nombre.toLowerCase().includes("teatro") ||
+      tipoPatrimonio.toLowerCase().includes("teatro");
+    
+    if (esTeatro) {
+      resultados.push(normalizarEntidad(st.subject.value, props));
+    }
+  }
+  return resultados;
+}
+
+// Busca SOLO monumentos históricos (NO museos, NO iglesias)
+function buscarMonumentosEspecifico() {
+  const resultados = [];
+  const excluirPalabras = ["museo","iglesia","catedral","convento","restaurante","hotel","parque"];
+  
+  for (const st of todosLosIndividuos()) {
+    const props = obtenerPropiedades(st.subject);
+    const nombre = getProp(props, "Nombre") || "";
+    const tipoPatrimonio = getProp(props, "Tipo_Patrimonio") || "";
+    const descripcion = getProp(props, "Descripcion") || "";
+    
+    let esExcluido = false;
+    for (const palabra of excluirPalabras) {
+      if (nombre.toLowerCase().includes(palabra)) {
+        esExcluido = true;
+        break;
+      }
+    }
+    
+    if (esExcluido) continue;
+    
+    const esMonumento = 
+      tipoPatrimonio.toLowerCase().includes("monumento") ||
+      tipoPatrimonio.toLowerCase().includes("historico") ||
+      tipoPatrimonio.toLowerCase().includes("patrimonio") ||
+      nombre.toLowerCase().includes("monumento") ||
+      nombre.toLowerCase().includes("casona") ||
+      nombre.toLowerCase().includes("heroinas") ||
+      descripcion.toLowerCase().includes("monumento");
+    
+    if (esMonumento) {
+      resultados.push(normalizarEntidad(st.subject.value, props));
+    }
+  }
+  return resultados;
+}
+
+// Busca SOLO atractivos naturales (cerros, lagunas, ríos, bosques)
+function buscarAtractivosNaturalesEspecifico() {
+  const resultados = [];
+  const palabrasNatural = ["cerro","laguna","lago","rio","río","montaña","bosque","cascada","valle","paisaje","naturaleza"];
+  
+  for (const st of todosLosIndividuos()) {
+    const props = obtenerPropiedades(st.subject);
+    const nombre = getProp(props, "Nombre") || "";
+    const tipoEcosistema = getProp(props, "Tipo_Ecosistema") || "";
+    const descripcion = getProp(props, "Descripcion") || "";
+    const clase = props._tipos?.join(" ") || "";
+    
+    // Solo si es Atractivo_Natural
+    if (!clase.includes("Atractivo_Natural")) continue;
+    
+    let esNatural = false;
+    for (const palabra of palabrasNatural) {
+      if (nombre.toLowerCase().includes(palabra) ||
+          tipoEcosistema.toLowerCase().includes(palabra) ||
+          descripcion.toLowerCase().includes(palabra)) {
+        esNatural = true;
+        break;
+      }
+    }
+    
+    if (esNatural) {
+      resultados.push(normalizarEntidad(st.subject.value, props));
+    }
+  }
+  return resultados;
+}
+
+// Busca SOLO miradores (incluye Cristo de la Concordia y otros)
+function buscarMiradoresEspecifico() {
+  const resultados = [];
+  const palabrasMirador = ["mirador","cristo","vista","panoramico","belvedere","punto panoramico","cerro","colina"];
+  
+  for (const st of todosLosIndividuos()) {
+    const props = obtenerPropiedades(st.subject);
+    const nombre = getProp(props, "Nombre") || "";
+    const tipoRecreacion = getProp(props, "Tipo_Recreacion") || "";
+    const descripcion = getProp(props, "Descripcion") || "";
+    const clase = props._tipos?.join(" ") || "";
+    
+    // Buscar en nombre, tipo de recreación y descripción
+    let esMirador = false;
+    for (const palabra of palabrasMirador) {
+      if (nombre.toLowerCase().includes(palabra) ||
+          tipoRecreacion.toLowerCase().includes(palabra) ||
+          descripcion.toLowerCase().includes(palabra)) {
+        esMirador = true;
+        break;
+      }
+    }
+    
+    // El Cristo de la Concordia tiene Tipo_Recreacion = "Mirador Religioso"
+    if (tipoRecreacion.toLowerCase().includes("mirador")) {
+      esMirador = true;
+    }
+    
+    if (esMirador) {
+      resultados.push(normalizarEntidad(st.subject.value, props));
+    }
+  }
+  return resultados;
+}
+
+// ============================================================
+// INTENCIONES COMPLETAS
 // ============================================================
 const INTENCIONES = [
   {
     clave: "gratuito",
-    terminos: [
-      "gratuito","gratuita","gratuitos","gratuitas","gratis","gratus","gratzis","gratiz",
-      "grtis","grtas","gatris","gtaris","gatis","gatiz","free","sin costo","sin cobro",
-      "entrada libre","entrada gratis","no cobran","no pagan","acceso libre","costo cero",
-      "gratuidad","gratu","grats","grat","grstu","free entry","free access","no cost",
-      "complimentary","zero cost","gratis entry","free of charge"
-    ]
-  },
-  {
-    clave: "museo",
-    terminos: [
-      "museo","museos","museum","museums","muse","musseo","mueso","museso",
-      "arqueologico","arqueológico","arqueologia","arqueología","historia","historico",
-      "historica","cultural","cultura","patrimonial","patrimonio","art gallery",
-      "gallery","exhibition","art museum"
-    ]
+    terminos: ["gratuito","gratis","sin costo","entrada gratis","entrada libre","lugares gratuitos","free","free entry","no cost","ingresso libero","senza costo","gratuito","gratuita"],
+    fn: () => buscarGratuitos()
   },
   {
     clave: "hospedaje",
-    terminos: [
-      "hotel","hoteles","hotels","hotle","hotl","hospedaje","hospedajes","hostal",
-      "hostales","alojamiento","alojamientos","accommodation","lodging","hote",
-      "hospeda","hospedar","dormir","donde dormir","donde quedarme","donde quedarse",
-      "habitacion","habitaciones","room","rooms","alberge","albergue","posada",
-      "inn","guesthouse","bed and breakfast","bnb"
-    ]
+    terminos: ["hotel","hoteles","hospedaje","alojamiento","hostal","donde dormir","accommodation","lodging","alloggio","dove dormire","albergo","ostello"],
+    fn: () => buscarPorClase("Hospedaje")
   },
   {
     clave: "restaurante",
-    terminos: [
-      "restaurante","restaurantes","restaurant","restaurants","restoran","restorante",
-      "comida","comer","almorzar","almuerzo","cenar","cena","picantera","picanteria",
-      "parrilada","parrilla","buffet","mercado","salteñeria","establecimiento",
-      "gastronomico","gastronomy","donde comer","lugar para comer","dining",
-      "eatery","cafe","coffee shop","lunch","dinner","breakfast"
-    ]
+    terminos: ["restaurante","restaurantes","establecimiento","donde comer","comer","restaurant","restaurants","eatery","ristorante","ristoranti","dove mangiare"],
+    fn: () => buscarPorClase("Establecimiento_Gastronomico")
   },
   {
-    clave: "gastronomia",
-    terminos: [
-      "plato","platos","comida tipica","comidas tipicas","gastronomia","gastronomía",
-      "tipico","tipicos","typical","dish","dishes","silpancho","pique macho","chicharron",
-      "chicharrón","sopa de mani","salteña","lapping","trancapecho","garapiña",
-      "mocochinchi","chicha","bebida","bebidas","food","local food","typical food",
-      "receta","recetas","degustar","probar","sabor","sabores","plato tipico",
-      "traditional food","bolivian food","culinary","cooking"
-    ]
+    clave: "comida",
+    terminos: ["comida","plato tipico","platos tipicos","gastronomia","degustar","typical food","local dish","food","piatto tipico","piatti tipici","assaggiare","cucina locale"],
+    fn: () => buscarPorClase("Producto_Alimenticio")
   },
   {
     clave: "parque",
-    terminos: [
-      "parque","parques","park","parks","parqe","parqes","jardin","jardines","garden",
-      "gardens","jardin botanico","botanical","botanico","tunari","kanata","familia",
-      "vial","mariscal","cretacico","toro toro","torotoro","recreativo","recreativos",
-      "recreación","recreacion","area verde","areas verdes","national park",
-      "nature reserve","ecological park","green area"
-    ]
+    terminos: ["parque","parques","jardin","jardines","area verde","park","parks","garden","parco","parchi","giardino"],
+    fn: () => buscarParquesEspecifico()
   },
   {
     clave: "natural",
-    terminos: [
-      "natural","naturales","nature","atractivo natural","atractivos naturales",
-      "ecosistema","ecosistemas","cerro","cerros","laguna","lagunas","lago","lagos",
-      "rio","ríos","rios","river","lake","mountain","montaña","montañas","hill",
-      "flora","fauna","paisaje","paisajes","landscape","landscapes","campo","campestre",
-      "silvestre","verde","waterfall","cascade","valley","forest","jungle"
-    ]
+    terminos: ["natural","naturaleza","atractivos naturales","paisaje","cerro","laguna","lago","rio","montaña","bosque","nature","landscape","mountain","lake","river","natura","paesaggio","attrazioni naturali"],
+    fn: () => buscarAtractivosNaturalesEspecifico()
   },
   {
-    clave: "senderismo",
-    terminos: [
-      "sendero","senderos","senderismo","hiking","trekking","treking","caminata",
-      "caminatas","caminar","ruta","rutas","trail","trails","excursion",
-      "ascenso","escalada","espeleologia","aventura","outdoor","aire libre",
-      "climbing","expedition","backpacking","nature walk","path","route"
-    ]
-  },
-  {
-    clave: "mirador",
-    terminos: [
-      "mirador","miradores","viewpoint","viewpoints","vista",
-      "vistas","panorama","panoramico","panoramica","alto","altura","elevacion",
-      "elevación","colina","cima","cumbre","lookout","observation point",
-      "scenic view","overlook"
-    ]
+    clave: "museo",
+    terminos: ["museo","museos","museum","museums","musei"],
+    fn: () => buscarMuseosEspecifico()
   },
   {
     clave: "iglesia",
-    terminos: [
-      "iglesia","iglesias","church","churches","catedral","catedrales","cathedral",
-      "templo","templos","temple","convento","conventos","convent","capilla",
-      "capillas","religioso","religiosa","religiosos","religiosas","religión",
-      "religion","espiritual","basilica","shrine","chapel","monastery"
-    ]
+    terminos: ["iglesia","iglesias","catedral","convento","templo","church","churches","cathedral","chiesa","chiese","cattedrale"],
+    fn: () => buscarIglesiasEspecifico()
+  },
+  {
+    clave: "senderismo",
+    terminos: ["senderismo","sendero","caminata","rutas de senderismo","hiking","trekking","trail","sentiero","escursione","camminata"],
+    fn: () => buscarAtractivosNaturalesEspecifico()
+  },
+  {
+    clave: "mirador",
+    terminos: ["mirador","miradores","vista","panoramico","cerros","punto panoramico","viewpoint","view","hill","lookout","belvedere","collina","punto panoramico"],
+    fn: () => buscarMiradoresEspecifico()
   },
   {
     clave: "evento",
-    terminos: [
-      "evento","eventos","event","events","festividad","festividades","festival",
-      "festivales","fiesta","fiestas","celebracion","celebración","carnaval",
-      "urkupiña","todos santos","navidad","entrada universitaria","corso",
-      "dia del peaton","feria","ferias","fair","fairs","anual","anualmente",
-      "celebration","parade","feast","holiday"
-    ]
-  },
-  {
-    clave: "feria",
-    terminos: [
-      "feria artesanal","ferias artesanales","artesania","artesanías","artesanal",
-      "artesanales","handicraft","craft","crafts","la cancha","cancha",
-      "mercado artesanal","souvenirs","souvenir","artesano","artesanos",
-      "artisan fair","craft fair","market","handmade"
-    ]
+    terminos: ["evento","eventos","festividad","festividades","feria","ferias","festival","celebracion","event","events","festival","fair","celebration","fiera","festa","celebrazione","festività","fiera artigianale","fiere artigianali"],
+    fn: () => buscarPorClase("Evento_Turístico")
   },
   {
     clave: "transporte",
-    terminos: [
-      "transporte","transportes","transport","transportation","bus","buses","micro",
-      "minibus","minibús","trufi","taxi","radio taxi","teleferico","teleférico",
-      "cable car","tren","train","mototaxi","moto taxi","transfer","aeropuerto",
-      "como llegar","llegar","acceso","acceder","llego","movilidad","shuttle",
-      "van","collective","public transport","metro","cableway","aerial tram"
-    ]
+    terminos: ["transporte","bus","taxi","micro","tren","teleferico","medios de transporte","transport","transportation","taxi","train","trasporto","mezzi di trasporto"],
+    fn: () => buscarPorClase("Transporte")
   },
   {
     clave: "accesible",
-    terminos: [
-      "accesible","accesibles","accessible","accessibility","accesibilidad",
-      "silla de ruedas","sillas de ruedas","wheelchair","discapacidad","discapacitado",
-      "movilidad reducida","movilidad","inclusivo","inclusiva","sin barreras",
-      "barreras arquitectonicas","rampas","handicap accessible","disabled access"
-    ]
+    terminos: ["accesible","accesibilidad","silla de ruedas","discapacidad","movilidad reducida","accessible","wheelchair","disability","accessibile","sedia a rotelle"],
+    fn: () => buscarAccesibles()
   },
   {
     clave: "arqueologico",
-    terminos: [
-      "arqueologico","arqueológico","arqueologia","arqueología","ruinas","ruin","ruins",
-      "vestigios","pukara","qollqas","inca","incaico","prehispanico","prehispánico",
-      "precolombino","fossil","fosil","dinosaurio","dinosaurios","prehistoric",
-      "prehistorico","prehistórico","incallajta","pocona","tarata","mizque","taracari",
-      "archaeological site","ancient ruins","excavation","artifact","remains"
-    ]
+    terminos: ["arqueologico","ruinas","inca","archaeological","ruins","archeologico","rovine","scavi"],
+    fn: () => buscarPorClase("Atractivo_Arqueológico")
+  },
+  {
+    clave: "cultural",
+    terminos: ["monumento","monumentos","historico","historicos","patrimonio","puntos de interes","cultural","cultura","monument","historical","heritage","monumenti","storico","patrimonio","punti di interesse"],
+    fn: () => buscarMonumentosEspecifico()
   },
   {
     clave: "familia",
-    terminos: [
-      "familia","familias","family","families","niños","niñas","ninos","ninas",
-      "kids","children","infantil","infantes","padres","hijos","familiar",
-      "para niños","con niños","recomendado para familias","apto para niños",
-      "diversión familiar","diversion","family friendly","child friendly",
-      "family oriented","kid friendly","with children"
-    ]
+    terminos: ["familia","familias","niños","infantil","recomendados para familias","family","kids","children","recommended for families","famiglia","bambini","consigliato per famiglie"],
+    fn: () => buscarPorClase("Atractivo_Recreativo")
+  },
+  {
+    clave: "teatro",
+    terminos: ["teatro","teatros","theater","theatre","teatri"],
+    fn: () => buscarTeatrosEspecifico()
   }
 ];
 
-// ============================================================
-// DETECCIÓN DE INTENCIÓN ROBUSTA
-// ============================================================
 function detectarIntencion(texto) {
   const norm = normalizar(texto);
-  const palabras = norm.split(" ");
-
-  const puntajes = {};
-
+  if (!norm || norm.length < 2) return null;
+  
+  let mejorPuntaje = 0;
+  let mejorIntencion = null;
+  
   for (const intencion of INTENCIONES) {
     let puntaje = 0;
+    
     for (const termino of intencion.terminos) {
       const nt = normalizar(termino);
-      if (norm.includes(nt)) {
-        puntaje += 10;
-        continue;
-      }
-      for (const palabra of palabras) {
-        if (similares(palabra, nt)) {
-          puntaje += 5;
-        }
+      
+      if (norm === nt) { puntaje = 999; break; }
+      if (norm.includes(nt)) { puntaje += 20; }
+      if (nt.includes(norm)) { puntaje += 25; }
+      
+      const palabrasQuery = norm.split(" ");
+      for (const palabra of palabrasQuery) {
+        if (palabra === nt) puntaje += 15;
+        else if (palabra.length > 2 && nt.length > 2 && (palabra.includes(nt) || nt.includes(palabra))) puntaje += 10;
+        else if (palabra.length > 3 && levenshtein(palabra, nt) <= 2) puntaje += 5;
       }
     }
-    if (puntaje > 0) puntajes[intencion.clave] = puntaje;
+    
+    if (puntaje > mejorPuntaje) {
+      mejorPuntaje = puntaje;
+      mejorIntencion = intencion;
+    }
   }
-
-  if (Object.keys(puntajes).length === 0) return null;
-
-  const ganadora = Object.entries(puntajes).sort((a, b) => b[1] - a[1])[0];
-  console.log(`🎯 Intención: "${ganadora[0]}" (puntaje: ${ganadora[1]})`);
-  console.log(`   Puntajes:`, puntajes);
-  return ganadora[0];
+  
+  return mejorPuntaje >= 4 ? mejorIntencion : null;
 }
 
 // ============================================================
-// ACCESO A PROPIEDADES
+// ACCESO AL GRAFO
 // ============================================================
+function todosLosIndividuos() {
+  return store.statementsMatching(null, new $rdf.NamedNode(RDF+"type"), new $rdf.NamedNode(OWL+"NamedIndividual"));
+}
+function individuosDe(clase) {
+  return store.statementsMatching(null, new $rdf.NamedNode(RDF+"type"), new $rdf.NamedNode(BASE+clase));
+}
+function buscarPorClase(clase) {
+  return individuosDe(clase).map(st => normalizarEntidad(st.subject.value, obtenerPropiedades(st.subject)));
+}
+function buscarGratuitos() {
+  const res = [];
+  for (const st of todosLosIndividuos()) {
+    const p = obtenerPropiedades(st.subject);
+    if (getBool(p,"Gratuito")===true || getNum(p,"Costo_Entrada")===0)
+      res.push(normalizarEntidad(st.subject.value, p));
+  }
+  return res;
+}
+function buscarAccesibles() {
+  const res = [];
+  for (const st of todosLosIndividuos()) {
+    const p = obtenerPropiedades(st.subject);
+    if (getBool(p,"Accesibilidad")===true)
+      res.push(normalizarEntidad(st.subject.value, p));
+  }
+  return res;
+}
+
 function obtenerPropiedades(uriNode) {
   const statements = store.statementsMatching(uriNode, null, null);
   const props = {};
-  statements.forEach((st) => {
-    const pred    = st.predicate.value;
-    const obj     = st.object;
+  statements.forEach(st => {
+    const pred     = st.predicate.value;
+    const obj      = st.object;
     const predName = pred.split("#").pop();
     if (obj.termType === "Literal") {
       if (!props[predName]) props[predName] = [];
       props[predName].push({ value: obj.value, lang: obj.lang || "" });
-    } else if (pred === RDF + "type") {
+    } else if (pred === RDF+"type") {
       if (!props._tipos) props._tipos = [];
       props._tipos.push(obj.value.split("#").pop());
     } else {
       if (!props._objProps) props._objProps = {};
       if (!props._objProps[predName]) props._objProps[predName] = [];
-      props._objProps[predName].push(obj.value.split("#").pop().replace(/_/g, " "));
+      props._objProps[predName].push(obj.value.split("#").pop().replace(/_/g," "));
     }
   });
   return props;
 }
 
-function getProp(props, name) {
-  if (!props[name] || !props[name].length) return null;
-  return props[name][0].value;
-}
+function getProp(props, name) { return props[name]?.length ? props[name][0].value : null; }
+function getBool(props, name) { const v = getProp(props,name); return v===null ? null : v==="true"; }
+function getNum(props, name)  { const v = getProp(props,name); if (v===null) return null; const n=parseFloat(v); return isNaN(n)?null:n; }
 
-function getBool(props, name) {
-  const v = getProp(props, name);
-  if (v === null) return null;
-  return v === "true";
-}
-
-function getNum(props, name) {
-  const v = getProp(props, name);
-  if (v === null) return null;
-  const n = parseFloat(v);
-  return isNaN(n) ? null : n;
-}
-
-// ============================================================
-// NORMALIZACIÓN DE ENTIDAD
-// ============================================================
 function normalizarEntidad(uri, props) {
-  const localName = (iri) => {
+  const uriLocal = (iri) => {
     const idx = iri.lastIndexOf("#");
-    return idx >= 0 ? decodeURIComponent(iri.slice(idx + 1)).replace(/_/g, " ") : iri;
+    return idx>=0 ? decodeURIComponent(iri.slice(idx+1)).replace(/_/g," ") : iri;
   };
+  let clase = "Entidad Turistica";
+  if (props._tipos)
+    for (const t of props._tipos)
+      if (t !== "NamedIndividual" && t !== "Thing") { clase = t.replace(/_/g," "); break; }
 
-  let clasePrincipal = "Entidad Turistica";
-  if (props._tipos) {
-    for (const t of props._tipos) {
-      if (t !== "NamedIndividual" && t !== "Thing") {
-        clasePrincipal = t.replace(/_/g, " ");
-        break;
-      }
-    }
-  }
-
-  const nombre =
-    getProp(props, "Nombre") ||
-    getProp(props, "Tipo_Hospedaje") ||
-    getProp(props, "Tipo_Transporte") ||
-    localName(uri);
-
-  const tipo =
-    getProp(props, "Tipo_Atractivo")   ||
-    getProp(props, "Tipo_Ecosistema")  ||
-    getProp(props, "Tipo_Recreacion")  ||
-    getProp(props, "Tipo_Evento")      ||
-    getProp(props, "Tipo_Transporte")  ||
-    getProp(props, "Tipo_Hospedaje")   ||
-    getProp(props, "Tipo_Establecimiento") ||
-    getProp(props, "Tipo_Producto")    ||
-    getProp(props, "Tipo_Patrimonio")  ||
-    getProp(props, "Es_Tipico")        ||
-    "";
-
-  const descripcion  = getProp(props, "Descripcion");
-  const ubicacion    = getProp(props, "Ubicacion");
-  const ingredientes = getProp(props, "Ingredientes");
-  const actividades  = getProp(props, "Actividades");
-  const ruta         = getProp(props, "Ruta");
-  const epoch        = getProp(props, "Epoca");
-  const frecuencia   = getProp(props, "Frecuencia");
-  const fechaInicio  = getProp(props, "Fecha_Inicio");
-  const fechaFin     = getProp(props, "Fecha_Fin");
-  const culturaOrigen = getProp(props, "Cultura_Origen");
-  const estadoConservacion = getProp(props, "Estado_Conservacion");
-  const incluye      = getProp(props, "Incluye_Servicios");
-  const servicios    = getProp(props, "Servicios");
-  const capacidad    = getNum(props, "Capacidad");
-  const costoAprox   = getNum(props, "Costo_Aproximado");
-
-  const horario =
-    getProp(props, "Horario_Especial")  ||
-    getProp(props, "Horario_Apertura")  ||
-    getProp(props, "Horario_Atencion")  ||
-    getProp(props, "Horario_Servicio")  ||
-    null;
-
-  const horarioCierra = getProp(props, "Horario_Cierra");
-  const horarioFull = horario && horarioCierra
-    ? `${horario} - ${horarioCierra}`
-    : horario;
-
-  const gratuito          = getBool(props, "Gratuito");
-  const accesibilidad     = getBool(props, "Accesibilidad");
-  const tieneDescuento    = getBool(props, "Tiene_Descuento");
-  const requiereReserva   = getBool(props, "Requiere_Reserva");
-  const patrimonioNacional = getBool(props, "Patrimonio_Nacional");
-  const disponible        = getBool(props, "Disponible");
-
-  const precioNoche  = getNum(props, "Precio_Noche");
-  const precioDia    = getNum(props, "Precio_Dia");
-  const costoEntrada = getNum(props, "Costo_Entrada");
-
-  const nivelConcurrencia = getProp(props, "Nivel_Concurrencia");
+  const objProps = props._objProps || {};
+  const horarioAp = getProp(props,"Horario_Apertura");
+  const horarioCi = getProp(props,"Horario_Cierra");
+  const horarioEsp= getProp(props,"Horario_Especial");
+  const horarioAt = getProp(props,"Horario_Atencion");
+  const horarioSv = getProp(props,"Horario_Servicio");
+  let horario = horarioEsp || horarioAt || horarioSv || horarioAp || null;
+  if (horarioAp && horarioCi) horario = `${horarioAp} - ${horarioCi}`;
 
   return {
-    nombre,
-    clase: clasePrincipal,
-    tipo,
-    descripcion,
-    ubicacion,
-    horario: horarioFull,
-    gratuito,
-    accesibilidad,
-    tieneDescuento,
-    requiereReserva,
-    patrimonioNacional,
-    precioNoche,
-    precioDia,
-    costoEntrada,
-    actividades,
-    ingredientes,
-    ruta,
-    epoch,
-    frecuencia,
-    fechaInicio,
-    fechaFin,
-    culturaOrigen,
-    estadoConservacion,
-    incluye,
-    servicios,
-    capacidad,
-    costoAprox,
-    nivelConcurrencia,
-    disponible,
+    nombre:             getProp(props,"Nombre") || getProp(props,"Tipo_Hospedaje") || getProp(props,"Tipo_Transporte") || uriLocal(uri),
+    clase,
+    descripcion:        getProp(props,"Descripcion"),
+    ubicacion:          getProp(props,"Ubicacion"),
+    horario,
+    nivelConcurrencia:  getProp(props,"Nivel_Concurrencia"),
+    gratuito:           getBool(props,"Gratuito"),
+    accesibilidad:      getBool(props,"Accesibilidad"),
+    tieneDescuento:     getBool(props,"Tiene_Descuento"),
+    requiereReserva:    getBool(props,"Requiere_Reserva"),
+    patrimonioNacional: getBool(props,"Patrimonio_Nacional"),
+    disponible:         getBool(props,"Disponible"),
+    costoEntrada:       getNum(props,"Costo_Entrada"),
+    precioNoche:        getNum(props,"Precio_Noche"),
+    precioDia:          getNum(props,"Precio_Dia"),
+    costoAprox:         getNum(props,"Costo_Aproximado"),
+    gradoDificultad:    getNum(props,"Grado_Dificultad"),
+    capacidad:          getNum(props,"Capacidad"),
+    actividades:        getProp(props,"Actividades"),
+    tipoEcosistema:     getProp(props,"Tipo_Ecosistema"),
+    epoch:              getProp(props,"Epoca"),
+    tipoPatrimonio:     getProp(props,"Tipo_Patrimonio"),
+    culturaOrigen:      getProp(props,"Cultura_Origen"),
+    estadoConservacion: getProp(props,"Estado_Conservacion"),
+    tipoRecreacion:     getProp(props,"Tipo_Recreacion"),
+    tipoEvento:         getProp(props,"Tipo_Evento"),
+    fechaInicio:        getProp(props,"Fecha_Inicio"),
+    fechaFin:           getProp(props,"Fecha_Fin"),
+    frecuencia:         getProp(props,"Frecuencia"),
+    tipoHospedaje:      getProp(props,"Tipo_Hospedaje"),
+    incluye:            getProp(props,"Incluye_Servicios"),
+    tipoEstablecimiento:getProp(props,"Tipo_Establecimiento"),
+    servicios:          getProp(props,"Servicios"),
+    tipoProducto:       getProp(props,"Tipo_Producto"),
+    esTipico:           getProp(props,"Es_Tipico"),
+    ingredientes:       getProp(props,"Ingredientes"),
+    tipoTransporte:     getProp(props,"Tipo_Transporte"),
+    ruta:               getProp(props,"Ruta"),
+    tipoAtractivo:      getProp(props,"Tipo_Atractivo"),
+    seLlegaPor:         objProps["seLlegaPor"]         || [],
+    estaCercaDe:        objProps["estaCercaDe"]         || [],
+    ofreceEvento:       objProps["ofreceEvento"]        || [],
+    seRealizaEn:        objProps["seRealizaEn"]         || [],
+    tieneAtractivo:     objProps["tieneAtractivo"]      || [],
+    tieneEstablecimiento: objProps["tieneEstablecimiento"] || [],
+    ofreceGastronomia:  objProps["ofreceGastronomia"]   || [],
+    ofreceHospedaje:    objProps["ofreceHospedaje"]     || [],
+    ubicadoEn:          objProps["ubicadoEn"]           || []
   };
 }
 
-// ============================================================
-// FUNCIONES DE BÚSQUEDA POR CLASE
-// ============================================================
-function individuosDe(clase) {
-  return store.statementsMatching(
-    null,
-    new $rdf.NamedNode(RDF + "type"),
-    new $rdf.NamedNode(BASE + clase)
-  );
+function buscarPorNombre(query) {
+  const normQuery = normalizar(query);
+  if (!normQuery || normQuery.length < 2) return { exactos: [], parciales: [] };
+
+  const exactos   = [];
+  const parciales = [];
+  const idsExactos = new Set();
+  const idsParciales = new Set();
+
+  for (const st of todosLosIndividuos()) {
+    const uri = st.subject.value;
+    const p   = obtenerPropiedades(st.subject);
+
+    const camposNombre = [
+      getProp(p,"Nombre"),
+      getProp(p,"Tipo_Hospedaje"),
+      getProp(p,"Tipo_Transporte"),
+      getProp(p,"Tipo_Establecimiento"),
+      getProp(p,"Tipo_Evento"),
+      getProp(p,"Tipo_Producto"),
+      (() => { const i=uri.lastIndexOf("#"); return i>=0 ? decodeURIComponent(uri.slice(i+1)).replace(/_/g," ") : null; })()
+    ].filter(Boolean);
+
+    let esExacto   = false;
+    let esParcial  = false;
+
+    for (const nombre of camposNombre) {
+      const norm = normalizar(nombre);
+      if (norm === normQuery) { esExacto = true; break; }
+      if (norm.includes(normQuery) || normQuery.includes(norm)) esParcial = true;
+    }
+
+    if (esExacto && !idsExactos.has(uri)) {
+      idsExactos.add(uri);
+      exactos.push(normalizarEntidad(uri, p));
+    } else if (esParcial && !idsExactos.has(uri) && !idsParciales.has(uri)) {
+      idsParciales.add(uri);
+      parciales.push(normalizarEntidad(uri, p));
+    }
+  }
+
+  return { exactos, parciales };
 }
 
-function todosLosIndividuos() {
-  return store.statementsMatching(
-    null,
-    new $rdf.NamedNode(RDF + "type"),
-    new $rdf.NamedNode(OWL + "NamedIndividual")
-  );
-}
-
-function buscarPorClase(clase) {
-  return individuosDe(clase).map((st) => {
-    const p = obtenerPropiedades(st.subject);
-    return normalizarEntidad(st.subject.value, p);
-  });
-}
-
-function buscarTodos() {
+function buscarTextoLibre(query) {
+  const normQ   = normalizar(query);
+  const palabras = normQ.split(" ").filter(p => p.length > 2);
   const ids = new Set();
   const res = [];
-  for (const st of todosLosIndividuos()) {
-    if (!ids.has(st.subject.value)) {
-      ids.add(st.subject.value);
-      const p = obtenerPropiedades(st.subject);
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res;
-}
-
-// ============================================================
-// BÚSQUEDAS ESPECÍFICAS
-// ============================================================
-function buscarGratuitos() {
-  const res = [];
-  for (const st of todosLosIndividuos()) {
-    const p = obtenerPropiedades(st.subject);
-    const g = getBool(p, "Gratuito");
-    const c = getNum(p, "Costo_Entrada");
-    if (g === true || c === 0) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res;
-}
-
-function buscarAccesibles() {
-  const res = [];
-  for (const st of todosLosIndividuos()) {
-    const p = obtenerPropiedades(st.subject);
-    if (getBool(p, "Accesibilidad") === true) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res;
-}
-
-function buscarMuseos() {
-  const res = [];
-  for (const st of individuosDe("Atractivo_Cultural_Histórico")) {
-    const p = obtenerPropiedades(st.subject);
-    const n = normalizar(getProp(p, "Nombre") || "");
-    const t = normalizar(getProp(p, "Tipo_Patrimonio") || "");
-    if (n.includes("museo") || t.includes("muse") || t.includes("musei")) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  if (res.length === 0) return buscarPorClase("Atractivo_Cultural_Histórico");
-  return res;
-}
-
-function buscarIglesias() {
-  const res = [];
-  const clases = ["Atractivo_Cultural_Histórico", "Atractivo_Recreativo"];
-  for (const clase of clases) {
-    for (const st of individuosDe(clase)) {
-      const p = obtenerPropiedades(st.subject);
-      const n = normalizar(getProp(p, "Nombre") || "");
-      const t = normalizar(getProp(p, "Tipo_Patrimonio") || "") +
-               " " + normalizar(getProp(p, "Tipo_Atractivo") || "") +
-               " " + normalizar(getProp(p, "Tipo_Recreacion") || "");
-      if (
-        n.includes("iglesia") || n.includes("catedral") || n.includes("templo") ||
-        n.includes("convento") || n.includes("capilla") ||
-        t.includes("religi") || t.includes("mirador religi")
-      ) {
-        res.push(normalizarEntidad(st.subject.value, p));
-      }
-    }
-  }
-  return res;
-}
-
-function buscarMiradores() {
-  const res = [];
-  for (const st of todosLosIndividuos()) {
-    const p = obtenerPropiedades(st.subject);
-    const n = normalizar(getProp(p, "Nombre") || "");
-    const t = normalizar(getProp(p, "Tipo_Recreacion") || "") +
-             " " + normalizar(getProp(p, "Tipo_Ecosistema") || "") +
-             " " + normalizar(getProp(p, "Tipo_Atractivo") || "");
-    if (
-      n.includes("cerro") || n.includes("mirador") || n.includes("cristo") ||
-      t.includes("mirador") || t.includes("cerro") || t.includes("montaña")
-    ) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res;
-}
-
-function buscarParques() {
-  const res = [];
-  for (const st of todosLosIndividuos()) {
-    const p = obtenerPropiedades(st.subject);
-    const n = normalizar(getProp(p, "Nombre") || "");
-    const t = normalizar(getProp(p, "Tipo_Ecosistema") || "") +
-             " " + normalizar(getProp(p, "Tipo_Recreacion") || "") +
-             " " + normalizar(getProp(p, "Tipo_Atractivo") || "");
-    if (
-      n.includes("parque") || n.includes("jardin") ||
-      t.includes("parque") || t.includes("jardin") || t.includes("botanico")
-    ) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res;
-}
-
-function buscarSenderismo() {
-  const res = [];
-  for (const st of individuosDe("Atractivo_Natural")) {
-    const p = obtenerPropiedades(st.subject);
-    const act = normalizar(getProp(p, "Actividades") || "");
-    const desc = normalizar(getProp(p, "Descripcion") || "");
-    if (
-      act.includes("sendero") || act.includes("trekking") ||
-      act.includes("caminata") || act.includes("hiking") ||
-      desc.includes("sendero") || desc.includes("trekking")
-    ) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  for (const st of individuosDe("Atractivo_Cultural_Histórico")) {
-    const p = obtenerPropiedades(st.subject);
-    const desc = normalizar(getProp(p, "Descripcion") || "");
-    if (desc.includes("sendero") || desc.includes("caminata")) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res.length > 0 ? res : buscarPorClase("Atractivo_Natural");
-}
-
-function buscarFerias() {
-  const res = [];
-  for (const st of individuosDe("Evento_Turístico")) {
-    const p = obtenerPropiedades(st.subject);
-    const n = normalizar(getProp(p, "Nombre") || "");
-    const t = normalizar(getProp(p, "Tipo_Evento") || "");
-    if (n.includes("feria") || t.includes("feria") || t.includes("artesanal")) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res.length > 0 ? res : buscarPorClase("Evento_Turístico");
-}
-
-function buscarMonumentos() {
-  const res = [];
-  for (const st of individuosDe("Atractivo_Cultural_Histórico")) {
-    const p = obtenerPropiedades(st.subject);
-    const t = normalizar(getProp(p, "Tipo_Patrimonio") || "");
-    const n = normalizar(getProp(p, "Nombre") || "");
-    if (t.includes("monumento") || t.includes("historico") || n.includes("monumento")) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res.length > 0 ? res : buscarPorClase("Atractivo_Cultural_Histórico");
-}
-
-function buscarFamilias() {
-  const res = [];
-  for (const st of individuosDe("Atractivo_Recreativo")) {
-    const p = obtenerPropiedades(st.subject);
-    const t = normalizar(getProp(p, "Tipo_Recreacion") || "");
-    const n = normalizar(getProp(p, "Nombre") || "");
-    if (
-      t.includes("familiar") || t.includes("infantil") || t.includes("educativo") ||
-      n.includes("familia") || n.includes("kanata") || n.includes("jardin")
-    ) {
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-  return res.length > 0 ? res : buscarPorClase("Atractivo_Recreativo");
-}
-
-// ============================================================
-// BÚSQUEDA POR NOMBRE
-// ============================================================
-function buscarPorNombre(nombreBuscado) {
-  const normBuscado = normalizar(nombreBuscado);
-  const res = [];
-  const ids = new Set();
-
   for (const st of todosLosIndividuos()) {
     if (ids.has(st.subject.value)) continue;
     const p = obtenerPropiedades(st.subject);
-
-    const nombre = normalizar(getProp(p, "Nombre") || "");
-    const tipoH  = normalizar(getProp(p, "Tipo_Hospedaje") || "");
-    const tipoT  = normalizar(getProp(p, "Tipo_Transporte") || "");
-    
-    const idx = st.subject.value.lastIndexOf("#");
-    const localN = normalizar(
-      idx >= 0
-        ? decodeURIComponent(st.subject.value.slice(idx + 1)).replace(/_/g, " ")
-        : st.subject.value
-    );
-
-    if (
-      nombre === normBuscado ||
-      tipoH === normBuscado ||
-      tipoT === normBuscado ||
-      localN === normBuscado ||
-      (nombre.includes(normBuscado) && normBuscado.length > 2) ||
-      (normBuscado.includes(nombre) && nombre.length > 2) ||
-      (nombre.split(" ")[0] === normBuscado && normBuscado.length > 2)
-    ) {
+    const campos = [
+      normalizar(getProp(p,"Nombre") || ""),
+      normalizar(getProp(p,"Descripcion") || ""),
+      normalizar(getProp(p,"Actividades") || ""),
+      normalizar(getProp(p,"Ubicacion") || "")
+    ].join(" ");
+    if (palabras.length > 0 && palabras.every(pal => campos.includes(pal))) {
       ids.add(st.subject.value);
       res.push(normalizarEntidad(st.subject.value, p));
     }
@@ -791,236 +653,88 @@ function buscarPorNombre(nombreBuscado) {
   return res;
 }
 
-// ============================================================
-// BÚSQUEDA POR PREFIJO (para tiempo real)
-// ============================================================
+function buscar(q) {
+  if (!loaded) cargarOntologia();
+  if (!q || !q.trim()) return [];
+
+  const query = q.trim();
+  console.log(`\n🔎 Consulta: "${query}"`);
+
+  const traducida = traducirConsulta(query);
+  const queryFinal = traducida !== query ? traducida : query;
+  if (traducida !== query) console.log(`🌐 Traducida: "${traducida}"`);
+
+  const { exactos, parciales } = buscarPorNombre(queryFinal);
+
+  let exactosOrig = [], parcialesOrig = [];
+  if (traducida !== query) {
+    const r = buscarPorNombre(query);
+    exactosOrig  = r.exactos;
+    parcialesOrig = r.parciales;
+  }
+
+  const todosExactos  = [...new Map([...exactos, ...exactosOrig].map(e=>[e.nombre,e])).values()];
+  const todosParciales = [...new Map([...parciales, ...parcialesOrig].map(e=>[e.nombre,e])).values()];
+
+  if (todosExactos.length > 0) {
+    console.log(`✅ Exactos por nombre: ${todosExactos.length}`);
+    return todosExactos;
+  }
+  if (todosParciales.length > 0) {
+    console.log(`✅ Parciales por nombre: ${todosParciales.length}`);
+    return todosParciales;
+  }
+
+  const intencion = detectarIntencion(queryFinal) || detectarIntencion(query);
+  if (intencion) {
+    console.log(`🎯 Intención: ${intencion.clave}`);
+    const porIntencion = intencion.fn();
+    if (porIntencion.length > 0) {
+      console.log(`✅ Por intención: ${porIntencion.length}`);
+      return porIntencion;
+    }
+  }
+
+  console.log(`🔤 Texto libre`);
+  const porTexto = buscarTextoLibre(queryFinal);
+  console.log(`✅ Texto libre: ${porTexto.length}`);
+  return porTexto;
+}
+
 function buscarPorPrefijo(prefijo) {
   if (!loaded) cargarOntologia();
   if (!prefijo || prefijo.trim().length < 2) return [];
-  
-  const normPrefijo = normalizar(prefijo);
-  const resultados = [];
-  const ids = new Set();
-  
-  console.log(`🔍 Búsqueda por prefijo: "${prefijo}" (normalizado: "${normPrefijo}")`);
-  
-  for (const st of todosLosIndividuos()) {
-    if (ids.has(st.subject.value)) continue;
-    const p = obtenerPropiedades(st.subject);
-    
-    const nombre = normalizar(getProp(p, "Nombre") || "");
-    const descripcion = normalizar(getProp(p, "Descripcion") || "");
-    const ubicacion = normalizar(getProp(p, "Ubicacion") || "");
-    const tipo = normalizar(
-      (getProp(p, "Tipo_Atractivo") || "") +
-      " " + (getProp(p, "Tipo_Recreacion") || "") +
-      " " + (getProp(p, "Tipo_Ecosistema") || "") +
-      " " + (getProp(p, "Tipo_Patrimonio") || "")
-    );
-    const actividades = normalizar(getProp(p, "Actividades") || "");
-    
-    let coincide = false;
-    
-    if (nombre.startsWith(normPrefijo)) coincide = true;
-    else if (nombre.includes(" " + normPrefijo)) coincide = true;
-    else if (descripcion.includes(normPrefijo)) coincide = true;
-    else if (ubicacion.includes(normPrefijo)) coincide = true;
-    else if (tipo.includes(normPrefijo)) coincide = true;
-    else if (actividades.includes(normPrefijo)) coincide = true;
-    
-    if (coincide) {
-      ids.add(st.subject.value);
-      resultados.push(normalizarEntidad(st.subject.value, p));
-      if (resultados.length >= 20) break;
-    }
-  }
-  
-  console.log(`✅ Prefijo "${prefijo}" → ${resultados.length} resultados`);
-  return resultados;
+  const resultados = buscar(prefijo.trim());
+  return resultados.slice(0, 20);
 }
 
-// ============================================================
-// BÚSQUEDA POR TEXTO LIBRE
-// ============================================================
-function buscarTextoLibre(q) {
-  const norm_q  = normalizar(q);
-  const stopwords = new Set(["que","los","las","hay","con","son","una","uno","del","para","por","como","donde","cual","cuales","sus","esta","este","the","and","for","with","are"]);
-  const palabras  = norm_q.split(" ").filter(p => p.length > 2 && !stopwords.has(p));
-
-  const ids = new Set();
-  const res = [];
-
-  for (const st of todosLosIndividuos()) {
-    if (ids.has(st.subject.value)) continue;
-    const p = obtenerPropiedades(st.subject);
-
-    const nombre = normalizar(getProp(p, "Nombre") || "");
-    const tipoH  = normalizar(getProp(p, "Tipo_Hospedaje") || "");
-    const tipoT  = normalizar(getProp(p, "Tipo_Transporte") || "");
-
-    if (
-      nombre === norm_q ||
-      tipoH  === norm_q ||
-      tipoT  === norm_q ||
-      (nombre && nombre === norm_q)
-    ) {
-      ids.add(st.subject.value);
-      res.push(normalizarEntidad(st.subject.value, p));
-      continue;
-    }
-
-    if (
-      (nombre && nombre.includes(norm_q)) ||
-      (nombre && norm_q.includes(nombre) && nombre.length > 4)
-    ) {
-      ids.add(st.subject.value);
-      res.push(normalizarEntidad(st.subject.value, p));
-      continue;
-    }
-
-    if (palabras.length === 0) continue;
-
-    const campos = [
-      nombre,
-      normalizar(getProp(p, "Descripcion") || ""),
-      normalizar(getProp(p, "Tipo_Atractivo") || ""),
-      normalizar(getProp(p, "Tipo_Ecosistema") || ""),
-      normalizar(getProp(p, "Tipo_Recreacion") || ""),
-      normalizar(getProp(p, "Tipo_Evento") || ""),
-      normalizar(getProp(p, "Tipo_Producto") || ""),
-      tipoH,
-      normalizar(getProp(p, "Tipo_Establecimiento") || ""),
-      normalizar(getProp(p, "Tipo_Patrimonio") || ""),
-      normalizar(getProp(p, "Actividades") || ""),
-      normalizar(getProp(p, "Ubicacion") || ""),
-      normalizar(getProp(p, "Cultura_Origen") || ""),
-    ].filter(Boolean).join(" ");
-
-    const campoTokens = campos.split(" ").filter(t => t.length > 1);
-
-    const todasCoinciden = palabras.every(pal =>
-      campos.includes(pal) ||
-      campoTokens.some(ct => ct.length > 2 && similares(pal, ct))
-    );
-
-    if (todasCoinciden) {
-      ids.add(st.subject.value);
-      res.push(normalizarEntidad(st.subject.value, p));
-    }
-  }
-
-  return res;
-}
-
-// ============================================================
-// FUNCIÓN PRINCIPAL DE BÚSQUEDA (CON TRADUCCIÓN)
-// ============================================================
-function buscar(q) {
-  if (!loaded) cargarOntologia();
-  if (!q || q.trim() === "") return [];
-
-  let query = q.trim();
-  console.log(`\n🔍 Consulta original: "${query}"`);
-  
-  // TRADUCIR si es necesario (inglés → español)
-  const queryTraducida = traducirConsulta(query);
-  if (queryTraducida !== query) {
-    console.log(`🔄 Usando traducción: "${queryTraducida}"`);
-    query = queryTraducida;
-  }
-
-  const porNombre = buscarPorNombre(query);
-  if (porNombre.length > 0 && porNombre.length <= 5) {
-    console.log(`✅ Coincidencia por nombre: ${porNombre.length} resultado(s)`);
-    return porNombre;
-  }
-
-  const intencion = detectarIntencion(query);
-  console.log(`🎯 Intención detectada: ${intencion || "ninguna → texto libre"}`);
-
-  let resultados = [];
-
-  switch (intencion) {
-    case "gratuito":       resultados = buscarGratuitos();                              break;
-    case "museo":          resultados = buscarMuseos();                                 break;
-    case "hospedaje":      resultados = buscarPorClase("Hospedaje");                    break;
-    case "restaurante":    resultados = buscarPorClase("Establecimiento_Gastronomico"); break;
-    case "gastronomia":    resultados = buscarPorClase("Producto_Alimenticio");         break;
-    case "parque":         resultados = buscarParques();                                break;
-    case "natural":        resultados = buscarPorClase("Atractivo_Natural");            break;
-    case "senderismo":     resultados = buscarSenderismo();                             break;
-    case "mirador":        resultados = buscarMiradores();                              break;
-    case "iglesia":        resultados = buscarIglesias();                               break;
-    case "evento":         resultados = buscarPorClase("Evento_Turístico");             break;
-    case "feria":          resultados = buscarFerias();                                 break;
-    case "transporte":     resultados = buscarPorClase("Transporte");                   break;
-    case "accesible":      resultados = buscarAccesibles();                             break;
-    case "arqueologico":   resultados = buscarPorClase("Atractivo_Arqueológico");       break;
-    case "familia":        resultados = buscarFamilias();                               break;
-    case "monumentos":     resultados = buscarMonumentos();                             break;
-    default:
-      resultados = buscarTextoLibre(query);
-  }
-
-  console.log(`✅ ${resultados.length} resultados para "${q}"`);
-  return resultados;
-}
-
-// ============================================================
-// SUGERENCIAS DE AUTOCOMPLETADO (BILINGÜE)
-// ============================================================
 function sugerencias(prefijo) {
   if (!loaded) cargarOntologia();
   if (!prefijo || prefijo.trim().length < 2) return [];
 
-  const norm = normalizar(prefijo);
+  const normPrefijo = normalizar(prefijo.trim());
   const sugs = new Set();
 
-  // Sugerencias de nombres de entidades
   for (const st of todosLosIndividuos()) {
-    const p = obtenerPropiedades(st.subject);
-    const nombre = getProp(p, "Nombre");
-    if (nombre && normalizar(nombre).includes(norm)) {
-      if (!sugs.has(nombre)) sugs.add(nombre);
+    const p    = obtenerPropiedades(st.subject);
+    const nombre = getProp(p,"Nombre");
+    if (nombre) {
+      const n = normalizar(nombre);
+      if (n.startsWith(normPrefijo) || n.includes(normPrefijo))
+        sugs.add(nombre);
     }
-    if (sugs.size >= 6) break;
+    if (sugs.size >= 8) break;
   }
 
-  // Sugerencias bilingües del diccionario
-  if (sugs.size < 4) {
-    const todosTerminos = new Set();
-    for (const int of INTENCIONES) {
-      for (const t of int.terminos) {
-        todosTerminos.add(t);
-      }
-    }
-    for (const [en, es] of Object.entries(DICCIONARIO_BILINGUE)) {
-      todosTerminos.add(en);
-      todosTerminos.add(es);
-    }
-    
-    for (const term of todosTerminos) {
-      const normTerm = normalizar(term);
-      if (normTerm.startsWith(norm) && !sugs.has(term)) {
-        sugs.add(term);
-        if (sugs.size >= 8) break;
-      }
-    }
-  }
-
-  const resultado = [...sugs].slice(0, 8);
-  console.log(`💡 Sugerencias para "${prefijo}":`, resultado);
-  return resultado;
+  const r = [...sugs].slice(0, 8);
+  console.log(`💡 Sugerencias "${prefijo}":`, r);
+  return r;
 }
 
-// ============================================================
-// SERIALIZACIÓN OWL/RDF-XML
-// ============================================================
 function escapeXml(str) {
-  if (!str && str !== false && str !== 0) return "";
-  return String(str).replace(/[&<>"']/g, (m) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;"
-  }[m]));
+  if (!str) return "";
+  return String(str).replace(/[&<>"']/g, m =>
+    ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;" }[m]));
 }
 
 function serializarAOWL(entidades, termino) {
@@ -1035,56 +749,66 @@ function serializarAOWL(entidades, termino) {
     <totalResultados rdf:datatype="xsd:integer">${entidades.length}</totalResultados>
   </owl:NamedIndividual>`;
 
-  entidades.forEach((e, i) => {
+  for (let i=0; i<entidades.length; i++) {
+    const e = entidades[i];
     owl += `\n  <owl:NamedIndividual rdf:about="#Resultado_${i}_${ts}">`;
-    const add = (tag, val) => {
-      if (val !== null && val !== undefined && val !== "") {
-        owl += `\n    <${tag}>${escapeXml(val)}</${tag}>`;
-      }
-    };
-    const addBool = (tag, val) => {
-      if (val !== null && val !== undefined) {
-        owl += `\n    <${tag} rdf:datatype="xsd:boolean">${val}</${tag}>`;
-      }
-    };
-    const addNum = (tag, val) => {
-      if (val !== null && val !== undefined) {
-        owl += `\n    <${tag} rdf:datatype="xsd:float">${val}</${tag}>`;
-      }
-    };
 
-    add("nombre",          e.nombre);
-    add("clase",           e.clase);
-    add("tipo",            e.tipo);
-    add("descripcion",     e.descripcion);
-    add("ubicacion",       e.ubicacion);
-    add("horario",         e.horario);
-    addBool("gratuito",          e.gratuito);
-    addBool("accesibilidad",     e.accesibilidad);
-    addBool("tieneDescuento",    e.tieneDescuento);
-    addBool("requiereReserva",   e.requiereReserva);
-    addBool("patrimonioNacional", e.patrimonioNacional);
-    addBool("disponible",        e.disponible);
-    addNum("precioNoche",   e.precioNoche);
-    addNum("precioDia",     e.precioDia);
-    addNum("costoEntrada",  e.costoEntrada);
-    addNum("costoAprox",    e.costoAprox);
-    add("actividades",     e.actividades);
-    add("ingredientes",    e.ingredientes);
-    add("ruta",            e.ruta);
-    add("epoch",           e.epoch);
-    add("frecuencia",      e.frecuencia);
-    add("fechaInicio",     e.fechaInicio);
-    add("fechaFin",        e.fechaFin);
-    add("culturaOrigen",   e.culturaOrigen);
-    add("estadoConservacion", e.estadoConservacion);
-    add("incluye",         e.incluye);
-    add("servicios",       e.servicios);
-    if (e.capacidad) add("capacidad", e.capacidad);
-    add("nivelConcurrencia", e.nivelConcurrencia);
+    const a  = (tag, val) => { if (val!==null && val!==undefined && val!=="") owl += `\n    <${tag}>${escapeXml(String(val))}</${tag}>`; };
+    const ab = (tag, val) => { if (val!==null && val!==undefined) owl += `\n    <${tag} rdf:datatype="xsd:boolean">${val}</${tag}>`; };
+    const an = (tag, val) => { if (val!==null && val!==undefined) owl += `\n    <${tag} rdf:datatype="xsd:float">${val}</${tag}>`; };
+    const arr= (tag, list)=> { if (list?.length) list.forEach(v => owl += `\n    <${tag}>${escapeXml(v)}</${tag}>`); };
+
+    a("nombre",              e.nombre);
+    a("clase",               e.clase);
+    a("tipoAtractivo",       e.tipoAtractivo);
+    a("tipoEcosistema",      e.tipoEcosistema);
+    a("tipoRecreacion",      e.tipoRecreacion);
+    a("tipoPatrimonio",      e.tipoPatrimonio);
+    a("tipoEvento",          e.tipoEvento);
+    a("tipoHospedaje",       e.tipoHospedaje);
+    a("tipoTransporte",      e.tipoTransporte);
+    a("tipoEstablecimiento", e.tipoEstablecimiento);
+    a("tipoProducto",        e.tipoProducto);
+    a("esTipico",            e.esTipico);
+    a("descripcion",         e.descripcion);
+    a("ubicacion",           e.ubicacion);
+    a("horario",             e.horario);
+    a("nivelConcurrencia",   e.nivelConcurrencia);
+    ab("gratuito",           e.gratuito);
+    ab("accesibilidad",      e.accesibilidad);
+    ab("tieneDescuento",     e.tieneDescuento);
+    ab("requiereReserva",    e.requiereReserva);
+    ab("patrimonioNacional", e.patrimonioNacional);
+    ab("disponible",         e.disponible);
+    an("costoEntrada",       e.costoEntrada);
+    an("precioNoche",        e.precioNoche);
+    an("precioDia",          e.precioDia);
+    an("costoAprox",         e.costoAprox);
+    an("gradoDificultad",    e.gradoDificultad);
+    an("capacidad",          e.capacidad);
+    a("actividades",         e.actividades);
+    a("epoch",               e.epoch);
+    a("culturaOrigen",       e.culturaOrigen);
+    a("estadoConservacion",  e.estadoConservacion);
+    a("fechaInicio",         e.fechaInicio);
+    a("fechaFin",            e.fechaFin);
+    a("frecuencia",          e.frecuencia);
+    a("incluye",             e.incluye);
+    a("servicios",           e.servicios);
+    a("ingredientes",        e.ingredientes);
+    a("ruta",                e.ruta);
+    arr("seLlegaPor",        e.seLlegaPor);
+    arr("estaCercaDe",       e.estaCercaDe);
+    arr("ofreceEvento",      e.ofreceEvento);
+    arr("seRealizaEn",       e.seRealizaEn);
+    arr("tieneAtractivo",    e.tieneAtractivo);
+    arr("tieneEstablecimiento", e.tieneEstablecimiento);
+    arr("ofreceGastronomia", e.ofreceGastronomia);
+    arr("ofreceHospedaje",   e.ofreceHospedaje);
+    arr("ubicadoEn",         e.ubicadoEn);
 
     owl += `\n  </owl:NamedIndividual>`;
-  });
+  }
 
   owl += `\n</rdf:RDF>`;
   return owl;
