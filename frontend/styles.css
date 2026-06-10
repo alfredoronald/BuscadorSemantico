@@ -1,4 +1,3 @@
-/* styles.css - Diseño mejorado para Turismo Cochabamba */
 
 :root {
   --clr-bg:      #f5f0e8;
@@ -85,7 +84,7 @@ body {
   background-size: 256px;
 }
 
-/* TÍTULO - ESTILO GRUESO */
+/* TÍTULO */
 .title-section {
   text-align: center;
   padding: 16px 20px 8px;
@@ -248,10 +247,12 @@ body {
   line-height: 1.4;
 }
 
-/* Buscador */
+/* =============================================
+   BUSCADOR — FIX z-index suggest-box
+   ============================================= */
 .search-section {
   position: relative;
-  z-index: 5;
+  z-index: 50;
   max-width: 700px;
   margin: 0 auto;
   padding: 0 20px 12px;
@@ -341,7 +342,7 @@ body {
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   list-style: none;
-  z-index: 100;
+  z-index: 200;
   max-height: 200px;
   overflow-y: auto;
 }
@@ -366,13 +367,13 @@ body {
   padding-left: 18px;
 }
 
-/* Chips */
+/* Chips TRILINGÜES */
 .quick-chips {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -387,7 +388,7 @@ body {
   padding: 8px 18px;
   cursor: pointer;
   transition: all var(--trans);
-  min-width: 70px;
+  min-width: 80px;
 }
 
 .chip:hover {
@@ -412,7 +413,8 @@ body {
   color: var(--clr-ink);
 }
 
-.chip-text-en {
+/* Textos en inglés e italiano para chips */
+.chip-text-en, .chip-text-it {
   font-size: 0.55rem;
   color: var(--clr-muted);
   letter-spacing: 0.3px;
@@ -549,14 +551,14 @@ body {
   border-radius: 20px;
 }
 
-.badge--free { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.badge--paid { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-.badge--access { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
+.badge--free     { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.badge--paid     { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+.badge--access   { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
 .badge--discount { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-.badge--reserve { background: #e8d4ff; color: #5a2d8c; border: 1px solid #d4b8ff; }
+.badge--reserve  { background: #e8d4ff; color: #5a2d8c; border: 1px solid #d4b8ff; }
 .badge--heritage { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.badge--avail { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-.badge--time { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+.badge--avail    { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+.badge--time     { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
 
 .card-extras {
   border-top: 1px solid var(--clr-border);
@@ -614,7 +616,7 @@ body {
 
 .no-results-icon { font-size: 2rem; opacity: 0.3; }
 
-/* FOOTER CON ESTADÍSTICAS */
+/* FOOTER */
 .site-footer {
   position: relative;
   z-index: 5;
@@ -694,7 +696,9 @@ body {
   color: white;
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE - MÓVILES
+   ============================================ */
 @media (max-width: 640px) {
   .heavy-title { font-size: 1.6rem; letter-spacing: 4px; }
   .heavy-sub { font-size: 0.7rem; letter-spacing: 6px; }
@@ -702,22 +706,34 @@ body {
   .slide-overlay { padding: 12px 14px 10px; }
   .slide-title { font-size: 0.9rem; }
   .carousel-btn { width: 28px; height: 28px; font-size: 14px; }
-  .quick-chips { gap: 6px; }
-  .chip { padding: 5px 12px; min-width: 60px; }
+  .quick-chips { gap: 8px; }
+  .chip { padding: 6px 12px; min-width: 65px; }
   .chip-icon { font-size: 1rem; }
   .chip-text { font-size: 0.6rem; }
-  .chip-text-en { display: none; }
+  .chip-text-en, .chip-text-it { font-size: 0.5rem; }
   .results-grid { grid-template-columns: 1fr; gap: 12px; }
   .footer-stats { gap: 6px; }
   .footer-stat { font-size: 0.5rem; }
 }
 
+/* Móviles muy pequeños: ocultar inglés e italiano para no saturar */
 @media (max-width: 480px) {
   .heavy-title { font-size: 1.3rem; letter-spacing: 3px; }
   .heavy-sub { font-size: 0.6rem; letter-spacing: 4px; }
-  .stats-strip { display: none; }
+  
+  .chip-text-en, .chip-text-it {
+    display: none;
+  }
+  .chip {
+    padding: 6px 10px;
+    min-width: 55px;
+  }
+  .chip-text {
+    font-size: 0.65rem;
+  }
 }
 
+/* Scrollbar personalizada */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--clr-border); border-radius: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--clr-accent); border-radius: 10px; }

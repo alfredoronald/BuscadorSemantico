@@ -1,6 +1,4 @@
 // backend/src/server.js
-// Servidor Express con respuestas en OWL/RDF-XML + endpoint de sugerencias
-// VERSIÓN COMPLETA CON BÚSQUEDA EN TIEMPO REAL
 
 const express = require("express");
 const cors    = require("cors");
@@ -35,6 +33,8 @@ app.get("/api/search", (req, res) => {
          xmlns="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#">
   <owl:NamedIndividual rdf:about="#Error">
     <mensaje>El parámetro 'q' es requerido.</mensaje>
+    <message>The 'q' parameter is required.</message>
+    <messaggio>Il parametro 'q' è richiesto.</messaggio>
   </owl:NamedIndividual>
 </rdf:RDF>`);
   }
@@ -53,12 +53,14 @@ app.get("/api/search", (req, res) => {
          xmlns="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#">
   <owl:NamedIndividual rdf:about="#Error">
     <mensaje>Error interno del servidor.</mensaje>
+    <message>Internal server error.</message>
+    <messaggio>Errore interno del server.</messaggio>
   </owl:NamedIndividual>
 </rdf:RDF>`);
   }
 });
 
-// ─── NUEVO API: Búsqueda por prefijo (tiempo real) → OWL/RDF-XML ─────────────
+// ─── API: Búsqueda por prefijo (tiempo real) → OWL/RDF-XML ───────────────────
 app.get("/api/search-prefix", (req, res) => {
   const q = (req.query.q || "").trim();
   console.log(`\n⚡ /api/search-prefix?q="${q}" (búsqueda en tiempo real)`);
@@ -71,6 +73,8 @@ app.get("/api/search-prefix", (req, res) => {
          xmlns="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#">
   <owl:NamedIndividual rdf:about="#SinResultados">
     <nombre>No se encontraron resultados</nombre>
+    <name>No results found</name>
+    <nome>Nessun risultato trovato</nome>
     <totalResultados rdf:datatype="xsd:integer">0</totalResultados>
   </owl:NamedIndividual>
 </rdf:RDF>`);
@@ -90,6 +94,8 @@ app.get("/api/search-prefix", (req, res) => {
          xmlns="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#">
   <owl:NamedIndividual rdf:about="#Error">
     <mensaje>Error interno del servidor.</mensaje>
+    <message>Internal server error.</message>
+    <messaggio>Errore interno del server.</messaggio>
   </owl:NamedIndividual>
 </rdf:RDF>`);
   }
@@ -113,5 +119,5 @@ app.listen(PORT, () => {
   console.log(`📡 OWL/RDF-XML activo`);
   console.log(`⚡ Búsqueda en tiempo real: /api/search-prefix?q=...`);
   console.log(`💡 Sugerencias en /api/suggest?q=...`);
-  console.log(`🌐 Soporte bilingüe: Español e Inglés`);
+  console.log(`🌐 Soporte trilingüe: Español, English, Italiano`);
 });
