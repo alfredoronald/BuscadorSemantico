@@ -21,7 +21,8 @@ app.get("/", (req, res) => {
 });
 
 // ─── API: Búsqueda semántica → OWL/RDF-XML ───────────────────────────────────
-app.get("/api/search", (req, res) => {
+// CORREGIDO: Ahora usa ASYNC/AWAIT
+app.get("/api/search", async (req, res) => {
   const q = (req.query.q || "").trim();
   console.log(`\n📥 /api/search?q="${q}"`);
 
@@ -40,8 +41,11 @@ app.get("/api/search", (req, res) => {
   }
 
   try {
-    const resultados   = ontology.buscar(q);
-    const owlResponse  = ontology.serializarAOWL(resultados, q);
+    // CORREGIDO: Usar AWAIT porque buscar es ASÍNCRONA
+    const resultados = await ontology.buscar(q);
+    console.log(`✅ Resultados encontrados: ${resultados?.length || 0}`);
+    
+    const owlResponse = ontology.serializarAOWL(resultados, q);
     res.setHeader("Content-Type", "application/rdf+xml; charset=utf-8");
     res.status(200).send(owlResponse);
   } catch (err) {
@@ -52,16 +56,17 @@ app.get("/api/search", (req, res) => {
          xmlns:owl="http://www.w3.org/2002/07/owl#"
          xmlns="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#">
   <owl:NamedIndividual rdf:about="#Error">
-    <mensaje>Error interno del servidor.</mensaje>
-    <message>Internal server error.</message>
-    <messaggio>Errore interno del server.</messaggio>
+    <mensaje>Error interno del servidor: ${err.message}</mensaje>
+    <message>Internal server error: ${err.message}</message>
+    <messaggio>Errore interno del server: ${err.message}</messaggio>
   </owl:NamedIndividual>
 </rdf:RDF>`);
   }
 });
 
 // ─── API: Búsqueda por prefijo (tiempo real) → OWL/RDF-XML ───────────────────
-app.get("/api/search-prefix", (req, res) => {
+// CORREGIDO: Ahora usa ASYNC/AWAIT
+app.get("/api/search-prefix", async (req, res) => {
   const q = (req.query.q || "").trim();
   console.log(`\n⚡ /api/search-prefix?q="${q}" (búsqueda en tiempo real)`);
 
@@ -81,8 +86,11 @@ app.get("/api/search-prefix", (req, res) => {
   }
 
   try {
-    const resultados   = ontology.buscarPorPrefijo(q);
-    const owlResponse  = ontology.serializarAOWL(resultados, q);
+    // CORREGIDO: Usar AWAIT porque buscarPorPrefijo devuelve Promise
+    const resultados = await ontology.buscarPorPrefijo(q);
+    console.log(`✅ Resultados encontrados (prefijo): ${resultados?.length || 0}`);
+    
+    const owlResponse = ontology.serializarAOWL(resultados, q);
     res.setHeader("Content-Type", "application/rdf+xml; charset=utf-8");
     res.status(200).send(owlResponse);
   } catch (err) {
@@ -93,9 +101,9 @@ app.get("/api/search-prefix", (req, res) => {
          xmlns:owl="http://www.w3.org/2002/07/owl#"
          xmlns="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#">
   <owl:NamedIndividual rdf:about="#Error">
-    <mensaje>Error interno del servidor.</mensaje>
-    <message>Internal server error.</message>
-    <messaggio>Errore interno del server.</messaggio>
+    <mensaje>Error interno del servidor: ${err.message}</mensaje>
+    <message>Internal server error: ${err.message}</message>
+    <messaggio>Errore interno del server: ${err.message}</messaggio>
   </owl:NamedIndividual>
 </rdf:RDF>`);
   }

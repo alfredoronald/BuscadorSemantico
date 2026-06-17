@@ -1,5 +1,5 @@
 // script.js - Buscador Semántico Turismo Cochabamba
-
+// CONECTADO A DBPEDIA Y WIKIPEDIA - VERSIÓN CORREGIDA
 
 const BASE_URL    = "http://localhost:3000/api/search";
 const PREFIX_URL  = "http://localhost:3000/api/search-prefix";
@@ -30,6 +30,8 @@ const i18n = {
     establishment:"Establecimiento", transport_type:"Tipo transporte", event_type:"Tipo evento",
     nearby:"Cerca de", how_to_get:"Cómo llegar", offers_event:"Ofrece evento",
     held_at:"Se realiza en", offers_food:"Gastronomía", lodging_type:"Tipo hospedaje",
+    dbpedia_info:"Información de DBpedia", wikipedia_link:"Ver en Wikipedia", coordinates:"Coordenadas",
+    dbpedia_link:"Ver en DBpedia",
   },
   en: {
     search:"Search", placeholder:"E.g.: restaurants, museums, parks, hotels, free places…",
@@ -45,6 +47,8 @@ const i18n = {
     establishment:"Establishment", transport_type:"Transport type", event_type:"Event type",
     nearby:"Near", how_to_get:"How to get there", offers_event:"Offers event",
     held_at:"Held at", offers_food:"Gastronomy", lodging_type:"Lodging type",
+    dbpedia_info:"DBpedia information", wikipedia_link:"View on Wikipedia", coordinates:"Coordinates",
+    dbpedia_link:"View on DBpedia",
   },
   it: {
     search:"Cerca", placeholder:"Es: ristoranti, musei, parchi, alloggi, gratuiti…",
@@ -60,6 +64,8 @@ const i18n = {
     establishment:"Locale", transport_type:"Tipo trasporto", event_type:"Tipo evento",
     nearby:"Vicino a", how_to_get:"Come arrivare", offers_event:"Offre evento",
     held_at:"Si svolge a", offers_food:"Gastronomia", lodging_type:"Tipo alloggio",
+    dbpedia_info:"Informazioni DBpedia", wikipedia_link:"Vedi su Wikipedia", coordinates:"Coordinate",
+    dbpedia_link:"Vedi su DBpedia",
   }
 };
 
@@ -90,6 +96,61 @@ function getClaseConfig(clase) {
 }
 
 // ============================================================
+// FUNCIÓN PARA OBTENER EL NOMBRE CORRECTO DE DBPEDIA DESDE WIKIPEDIA
+// ============================================================
+function obtenerNombreDBpediaDesdeWikipedia(wikiPageUrl) {
+  if (!wikiPageUrl) return null;
+  // Extraer el título de la URL de Wikipedia
+  // Ejemplo: https://en.wikipedia.org/wiki/Pique_macho -> Pique_macho
+  const match = wikiPageUrl.match(/\/wiki\/([^#?]+)/);
+  if (match && match[1]) {
+    return decodeURIComponent(match[1]);
+  }
+  return null;
+}
+
+// ============================================================
+// FUNCIÓN PARA GENERAR ENLACE DBPEDIA (SIN ALTERNATIVAS)
+// ============================================================
+function generarEnlaceDBpedia(entidad) {
+  // 1. Prioridad: Desde la URL de Wikipedia (la fuente más confiable)
+  if (entidad.dbpedia?.wikiPage) {
+    const nombreCorrecto = obtenerNombreDBpediaDesdeWikipedia(entidad.dbpedia.wikiPage);
+    if (nombreCorrecto) {
+      return `https://dbpedia.org/resource/${nombreCorrecto}`;
+    }
+  }
+  
+  // 2. Desde el campo sameAs (viene de la ontología)
+  if (entidad.sameAs && entidad.sameAs.length) {
+    const dbpediaLink = entidad.sameAs.find(link => link.includes("dbpedia.org/resource/"));
+    if (dbpediaLink) return dbpediaLink;
+  }
+  
+  // 3. Fallback: desde el nombre normalizado (por si no hay Wikipedia)
+  if (entidad.nombre) {
+    const nombreNormalizado = entidad.nombre
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_]/g, '');
+    
+    if (nombreNormalizado) {
+      // Para "Parque Nacional Tunari" -> "Tunari_National_Park"
+      if (entidad.nombre.toLowerCase().includes("parque nacional")) {
+        const resto = entidad.nombre.replace(/Parque Nacional/i, '').trim();
+        if (resto) {
+          const nombreIngles = resto.replace(/\s+/g, '_') + "_National_Park";
+          return `https://dbpedia.org/resource/${nombreIngles}`;
+        }
+      }
+      return `https://dbpedia.org/resource/${nombreNormalizado}`;
+    }
+  }
+  
+  return null;
+}
+
+// ============================================================
 // ESTADO
 // ============================================================
 let currentLang     = detectarIdioma();
@@ -103,100 +164,196 @@ const resultsEl   = document.getElementById("resultados");
 const emptyState  = document.getElementById("emptyState");
 const suggestBox  = document.getElementById("suggestBox");
 
-const t0 = i18n[currentLang];
-input.placeholder = t0.placeholder;
-btn.textContent   = t0.search;
+if (input) {
+  const t0 = i18n[currentLang];
+  input.placeholder = t0.placeholder;
+  if (btn) btn.textContent = t0.search;
+}
 console.log(`🌐 Idioma: ${currentLang}`);
 
 // ============================================================
-// PARSEO OWL — lee TODOS los campos incluyendo relaciones
+// PARSEO OWL — VERSIÓN CORREGIDA CON getElementsByTagName
 // ============================================================
 function parseOWL(owlText) {
   const results = [];
+  
+  // LOG DE DEPURACIÓN: Ver primeros 500 caracteres del XML
+  console.log("📄 XML recibido (primeros 500 caracteres):");
+  console.log(owlText.substring(0, 500));
+  
   try {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(owlText, "text/xml");
-    if (xmlDoc.querySelector("parsererror")) {
-      console.error("Error XML al parsear OWL");
+    
+    // Verificar error de parsing
+    const parserError = xmlDoc.querySelector("parsererror");
+    if (parserError) {
+      console.error("Error XML al parsear OWL:", parserError.textContent);
       return results;
     }
 
-    const items = xmlDoc.querySelectorAll("owl\\:NamedIndividual, NamedIndividual");
+    // Buscar TODOS los elementos NamedIndividual (cualquier prefijo)
+    const items = xmlDoc.getElementsByTagNameNS("*", "NamedIndividual");
+    
+    // Si no encuentra con namespace, buscar por nombre local
+    let allItems = [];
+    if (items.length === 0) {
+      const allElements = xmlDoc.getElementsByTagName("*");
+      for (let i = 0; i < allElements.length; i++) {
+        const el = allElements[i];
+        const localName = el.localName || el.tagName;
+        if (localName && localName.toLowerCase() === "namedindividual") {
+          allItems.push(el);
+        }
+      }
+    } else {
+      allItems = Array.from(items);
+    }
+    
+    // También buscar elementos con rdf:about que contengan "Resultado_"
+    const resultadoItems = xmlDoc.querySelectorAll("[rdf\\:about*='Resultado_'], [about*='Resultado_']");
+    for (let i = 0; i < resultadoItems.length; i++) {
+      if (!allItems.includes(resultadoItems[i])) {
+        allItems.push(resultadoItems[i]);
+      }
+    }
+    
+    console.log(`📄 Encontrados ${allItems.length} individuos en el XML`);
 
-    for (const item of items) {
-      const about = item.getAttribute("rdf:about") || "";
-      if (!about.includes("Resultado_")) continue;
+    for (const item of allItems) {
+      const about = item.getAttribute("rdf:about") || item.getAttribute("about") || "";
+      if (!about.includes("Resultado_") && !about.includes("Resultado")) continue;
 
-      // Helper: primer texto de un tag
-      const txt  = (tag) => { const el = item.querySelector(tag); return el ? (el.textContent||"").trim() : ""; };
-      // Helper: booleano
-      const bool = (tag) => { const el = item.querySelector(tag); if (!el) return null; return el.textContent.trim()==="true"; };
-      // Helper: número
-      const num  = (tag) => { const el = item.querySelector(tag); if (!el||!el.textContent.trim()) return null; const n=parseFloat(el.textContent); return isNaN(n)?null:n; };
-      // Helper: lista de tags (para relaciones múltiples)
-      const list = (tag) => { const els = item.querySelectorAll(tag); return [...els].map(el=>(el.textContent||"").trim()).filter(Boolean); };
-
-      const e = {
-        // Identificación
-        nombre:               txt("nombre"),
-        clase:                txt("clase"),
-        // Tipos específicos por clase
-        tipoAtractivo:        txt("tipoAtractivo"),
-        tipoEcosistema:       txt("tipoEcosistema"),
-        tipoRecreacion:       txt("tipoRecreacion"),
-        tipoPatrimonio:       txt("tipoPatrimonio"),
-        tipoEvento:           txt("tipoEvento"),
-        tipoHospedaje:        txt("tipoHospedaje"),
-        tipoTransporte:       txt("tipoTransporte"),
-        tipoEstablecimiento:  txt("tipoEstablecimiento"),
-        tipoProducto:         txt("tipoProducto"),
-        esTipico:             txt("esTipico"),
-        // Generales
-        descripcion:          txt("descripcion"),
-        ubicacion:            txt("ubicacion"),
-        horario:              txt("horario"),
-        nivelConcurrencia:    txt("nivelConcurrencia"),
-        // Booleanos
-        gratuito:             bool("gratuito"),
-        accesibilidad:        bool("accesibilidad"),
-        tieneDescuento:       bool("tieneDescuento"),
-        requiereReserva:      bool("requiereReserva"),
-        patrimonioNacional:   bool("patrimonioNacional"),
-        disponible:           bool("disponible"),
-        // Numéricos
-        costoEntrada:         num("costoEntrada"),
-        precioNoche:          num("precioNoche"),
-        precioDia:            num("precioDia"),
-        costoAprox:           num("costoAprox"),
-        gradoDificultad:      num("gradoDificultad"),
-        capacidad:            num("capacidad"),
-        // Detalles por clase
-        actividades:          txt("actividades"),
-        ingredientes:         txt("ingredientes"),
-        ruta:                 txt("ruta"),
-        epoch:                txt("epoch"),
-        culturaOrigen:        txt("culturaOrigen"),
-        estadoConservacion:   txt("estadoConservacion"),
-        fechaInicio:          txt("fechaInicio"),
-        fechaFin:             txt("fechaFin"),
-        frecuencia:           txt("frecuencia"),
-        incluye:              txt("incluye"),
-        servicios:            txt("servicios"),
-        // Relaciones (pueden ser múltiples)
-        seLlegaPor:           list("seLlegaPor"),
-        estaCercaDe:          list("estaCercaDe"),
-        ofreceEvento:         list("ofreceEvento"),
-        seRealizaEn:          list("seRealizaEn"),
-        tieneAtractivo:       list("tieneAtractivo"),
-        ofreceGastronomia:    list("ofreceGastronomia"),
-        ofreceHospedaje:      list("ofreceHospedaje"),
-        ubicadoEn:            list("ubicadoEn"),
+      // Función para obtener texto de un tag por nombre (usando getElementsByTagName)
+      const getText = (tagName) => {
+        // Buscar por getElementsByTagName (más tolerante con namespaces)
+        const elements = item.getElementsByTagName(tagName);
+        if (elements.length > 0) {
+          return (elements[0].textContent || "").trim();
+        }
+        // Buscar por getElementsByTagNameNS (con cualquier namespace)
+        const elementsNS = item.getElementsByTagNameNS("*", tagName);
+        if (elementsNS.length > 0) {
+          return (elementsNS[0].textContent || "").trim();
+        }
+        return "";
+      };
+      
+      // Función para obtener booleanos
+      const getBool = (tagName) => {
+        const val = getText(tagName);
+        return val === "true";
+      };
+      
+      // Función para obtener números
+      const getNum = (tagName) => {
+        const val = getText(tagName);
+        if (!val) return null;
+        const n = parseFloat(val);
+        return isNaN(n) ? null : n;
+      };
+      
+      // Función para obtener lista de relaciones
+      const getList = (tagName) => {
+        const list = [];
+        const elements = item.getElementsByTagName(tagName);
+        for (let i = 0; i < elements.length; i++) {
+          const text = (elements[i].textContent || "").trim();
+          if (text) list.push(text);
+        }
+        return list;
+      };
+      
+      // Función para obtener owl:sameAs links
+      const getSameAsLinks = () => {
+        const links = [];
+        const elements = item.getElementsByTagName("sameAs");
+        for (let i = 0; i < elements.length; i++) {
+          const resource = elements[i].getAttribute("rdf:resource") || elements[i].getAttribute("resource");
+          if (resource) links.push(resource);
+        }
+        return links;
       };
 
-      if (e.nombre && e.nombre !== "No se encontraron resultados") results.push(e);
+      const nombre = getText("nombre");
+      console.log(`📝 Procesando individuo, nombre encontrado: "${nombre}"`);
+      
+      if (!nombre || nombre === "") continue;
+
+      // Leer dbpedia
+      const dbpedia = {
+        label:      getText("dbpediaLabel"),
+        abstract:   getText("dbpediaAbstract"),
+        thumbnail:  getText("dbpediaThumbnail"),
+        lat:        getNum("dbpediaLat"),
+        long:       getNum("dbpediaLong"),
+        wikiPage:   getText("dbpediaWikiPage")
+      };
+      const hasDbpedia = dbpedia.label || dbpedia.abstract || dbpedia.thumbnail || dbpedia.lat || dbpedia.long || dbpedia.wikiPage;
+
+      const entidad = {
+        nombre:               nombre,
+        clase:                getText("clase"),
+        tipoAtractivo:        getText("tipoAtractivo"),
+        tipoEcosistema:       getText("tipoEcosistema"),
+        tipoRecreacion:       getText("tipoRecreacion"),
+        tipoPatrimonio:       getText("tipoPatrimonio"),
+        tipoEvento:           getText("tipoEvento"),
+        tipoHospedaje:        getText("tipoHospedaje"),
+        tipoTransporte:       getText("tipoTransporte"),
+        tipoEstablecimiento:  getText("tipoEstablecimiento"),
+        tipoProducto:         getText("tipoProducto"),
+        esTipico:             getText("esTipico"),
+        descripcion:          getText("descripcion"),
+        ubicacion:            getText("ubicacion"),
+        horario:              getText("horario"),
+        nivelConcurrencia:    getText("nivelConcurrencia"),
+        gratuito:             getBool("gratuito"),
+        accesibilidad:        getBool("accesibilidad"),
+        tieneDescuento:       getBool("tieneDescuento"),
+        requiereReserva:      getBool("requiereReserva"),
+        patrimonioNacional:   getBool("patrimonioNacional"),
+        disponible:           getBool("disponible"),
+        costoEntrada:         getNum("costoEntrada"),
+        precioNoche:          getNum("precioNoche"),
+        precioDia:            getNum("precioDia"),
+        costoAprox:           getNum("costoAprox"),
+        gradoDificultad:      getNum("gradoDificultad"),
+        capacidad:            getNum("capacidad"),
+        actividades:          getText("actividades"),
+        ingredientes:         getText("ingredientes"),
+        ruta:                 getText("ruta"),
+        epoch:                getText("epoch"),
+        culturaOrigen:        getText("culturaOrigen"),
+        estadoConservacion:   getText("estadoConservacion"),
+        fechaInicio:          getText("fechaInicio"),
+        fechaFin:             getText("fechaFin"),
+        frecuencia:           getText("frecuencia"),
+        incluye:              getText("incluye"),
+        servicios:            getText("servicios"),
+        sameAs:               getSameAsLinks(),
+        dbpedia:              hasDbpedia ? dbpedia : null,
+        seLlegaPor:           getList("seLlegaPor"),
+        estaCercaDe:          getList("estaCercaDe"),
+        ofreceEvento:         getList("ofreceEvento"),
+        seRealizaEn:          getList("seRealizaEn"),
+        tieneAtractivo:       getList("tieneAtractivo"),
+        ofreceGastronomia:    getList("ofreceGastronomia"),
+        ofreceHospedaje:      getList("ofreceHospedaje"),
+        ubicadoEn:            getList("ubicadoEn"),
+      };
+
+      if (entidad.nombre && entidad.nombre !== "" && entidad.nombre !== "No se encontraron resultados") {
+        results.push(entidad);
+      }
     }
   } catch (err) {
     console.error("Error parseando OWL:", err);
+  }
+  
+  console.log(`✅ Parseados ${results.length} resultados`);
+  if (results.length > 0) {
+    console.log(`📋 Primer resultado: ${results[0].nombre} (${results[0].clase})`);
   }
   return results;
 }
@@ -212,7 +369,7 @@ function esc(str) {
 }
 
 // ============================================================
-// RENDER CARD — muestra TODA la información disponible
+// RENDER CARD - VERSIÓN CON ENLACE DBPEDIA CORRECTO (SIN ALTERNATIVAS)
 // ============================================================
 function renderCard(e, t) {
   const cfg   = getClaseConfig(e.clase);
@@ -220,7 +377,15 @@ function renderCard(e, t) {
   const icon  = cfg.icon;
   const claseLabel = (e.clase||"").replace(/_/g," ");
 
-  // ── Badges de estado ──────────────────────────────────────
+  // Imagen desde DBpedia
+  let imageHtml = "";
+  if (e.dbpedia?.thumbnail && e.dbpedia.thumbnail !== "") {
+    imageHtml = `<div class="card-image">
+      <img src="${esc(e.dbpedia.thumbnail)}" alt="${esc(e.nombre)}" loading="lazy" onerror="this.style.display='none'">
+    </div>`;
+  }
+
+  // Badges
   const badges = [];
   if (e.gratuito === true)            badges.push(`<span class="badge badge--free">🆓 ${t.free}</span>`);
   else if (e.gratuito === false)      badges.push(`<span class="badge badge--paid">💰 ${t.notFree}</span>`);
@@ -229,24 +394,17 @@ function renderCard(e, t) {
   if (e.requiereReserva === true)     badges.push(`<span class="badge badge--reserve">📅 ${t.reservation}</span>`);
   if (e.patrimonioNacional === true)  badges.push(`<span class="badge badge--heritage">🏛️ ${t.heritage}</span>`);
   if (e.disponible === true)          badges.push(`<span class="badge badge--avail">✅ ${t.available}</span>`);
-  else if (e.disponible === false)    badges.push(`<span class="badge badge--paid">❌ No disponible</span>`);
   if (e.horario)                      badges.push(`<span class="badge badge--time">⏰ ${esc(e.horario)}</span>`);
 
-  // ── Extras por campo ─────────────────────────────────────
+  // Extras
   const extras = [];
-
-  // Tipo específico según clase
   const tipoLabel = e.tipoEstablecimiento || e.tipoHospedaje || e.tipoTransporte ||
                     e.tipoEvento || e.tipoRecreacion || e.tipoEcosistema ||
                     e.tipoPatrimonio || e.tipoProducto || e.tipoAtractivo || "";
   if (tipoLabel) extras.push(`<p class="card-extra">🏷️ ${t.typical}: <strong>${esc(tipoLabel)}</strong></p>`);
-
-  // Gastronomía
   if (e.esTipico)     extras.push(`<p class="card-extra">🍽️ ${t.typical}: ${esc(e.esTipico)}</p>`);
   if (e.ingredientes) extras.push(`<p class="card-extra">🍳 ${t.ingredients}: ${esc(e.ingredientes)}</p>`);
   if (e.servicios)    extras.push(`<p class="card-extra">🛎️ ${t.services}: ${esc(e.servicios)}</p>`);
-
-  // Precios
   if (e.precioNoche !== null && e.precioNoche !== undefined)
     extras.push(`<p class="card-extra">💤 ${t.price_night}: <strong>Bs. ${e.precioNoche}</strong></p>`);
   if (e.precioDia !== null && e.precioDia !== undefined)
@@ -255,38 +413,66 @@ function renderCard(e, t) {
     extras.push(`<p class="card-extra">🎫 ${t.entry}: <strong>Bs. ${e.costoEntrada}</strong></p>`);
   if (e.costoAprox !== null && e.costoAprox !== undefined)
     extras.push(`<p class="card-extra">💵 ${t.approx_cost}: <strong>Bs. ${e.costoAprox}</strong></p>`);
-
-  // Hospedaje
   if (e.incluye)    extras.push(`<p class="card-extra">✨ ${t.includes}: ${esc(e.incluye)}</p>`);
-
-  // Natural / Senderismo
   if (e.actividades) extras.push(`<p class="card-extra">🎯 ${t.activities}: ${esc(e.actividades)}</p>`);
   if (e.gradoDificultad !== null && e.gradoDificultad !== undefined)
     extras.push(`<p class="card-extra">💪 ${t.difficulty}: <strong>${e.gradoDificultad}/5</strong></p>`);
   if (e.tipoEcosistema) extras.push(`<p class="card-extra">🌍 ${t.ecosystem}: ${esc(e.tipoEcosistema)}</p>`);
-
-  // Transporte
   if (e.ruta)       extras.push(`<p class="card-extra">🗺️ ${t.route}: ${esc(e.ruta)}</p>`);
   if (e.capacidad)  extras.push(`<p class="card-extra">👥 ${t.capacity}: ${e.capacidad} pers.</p>`);
-
-  // Eventos
   if (e.tipoEvento)  extras.push(`<p class="card-extra">🎊 ${t.event_type}: ${esc(e.tipoEvento)}</p>`);
   if (e.frecuencia)  extras.push(`<p class="card-extra">🔁 ${t.frequency}: ${esc(e.frecuencia)}</p>`);
   if (e.fechaInicio || e.fechaFin)
     extras.push(`<p class="card-extra">📅 ${t.dates}: ${esc(e.fechaInicio||"")}${e.fechaFin ? " → "+esc(e.fechaFin) : ""}</p>`);
-
-  // Cultural / Histórico
   if (e.epoch)              extras.push(`<p class="card-extra">🕰️ ${t.epoch}: ${esc(e.epoch)}</p>`);
   if (e.tipoPatrimonio)     extras.push(`<p class="card-extra">🏛️ ${t.heritage_type}: ${esc(e.tipoPatrimonio)}</p>`);
-
-  // Arqueológico
   if (e.culturaOrigen)      extras.push(`<p class="card-extra">🏺 ${t.origin}: ${esc(e.culturaOrigen)}</p>`);
   if (e.estadoConservacion) extras.push(`<p class="card-extra">🔍 ${t.conservation}: ${esc(e.estadoConservacion)}</p>`);
-
-  // Concurrencia
   if (e.nivelConcurrencia)  extras.push(`<p class="card-extra">👁️ ${t.concurrency}: ${esc(e.nivelConcurrencia)}</p>`);
 
-  // ── Relaciones entre entidades ────────────────────────────
+  // ============================================================
+  // DBPEDIA - ENLACE CORRECTO (SIN ALTERNATIVAS)
+  // ============================================================
+  let dbpediaHtml = "";
+  
+  // Generar el enlace correcto de DBpedia
+  const dbpediaLink = generarEnlaceDBpedia(e);
+  
+  // Construir la sección DBpedia
+  const dbpediaItems = [];
+  
+  // Abstract de DBpedia
+  if (e.dbpedia?.abstract && e.dbpedia.abstract !== "") {
+    let abstractText = e.dbpedia.abstract;
+    if (abstractText.length > 300) abstractText = abstractText.substring(0, 300) + "...";
+    dbpediaItems.push(`<p class="card-dbpedia-abstract"><span class="dbpedia-icon">📖</span> ${esc(abstractText)}</p>`);
+  }
+  
+  // Coordenadas
+  if (e.dbpedia?.lat !== null && e.dbpedia?.lat !== undefined && e.dbpedia?.long !== null && e.dbpedia?.long !== undefined) {
+    const mapUrl = `https://www.openstreetmap.org/?mlat=${e.dbpedia.lat}&mlon=${e.dbpedia.long}&zoom=15`;
+    dbpediaItems.push(`<p class="card-dbpedia-coords">🗺️ ${t.coordinates}: <a href="${mapUrl}" target="_blank" rel="noopener noreferrer">${e.dbpedia.lat.toFixed(4)}, ${e.dbpedia.long.toFixed(4)}</a></p>`);
+  }
+  
+  // Enlace a Wikipedia
+  if (e.dbpedia?.wikiPage && e.dbpedia.wikiPage !== "") {
+    dbpediaItems.push(`<p class="card-dbpedia-wiki">📚 <a href="${esc(e.dbpedia.wikiPage)}" target="_blank" rel="noopener noreferrer">${t.wikipedia_link}</a></p>`);
+  }
+  
+  // Enlace directo a DBpedia (UN SOLO ENLACE, el correcto)
+  if (dbpediaLink) {
+    dbpediaItems.push(`<p class="card-dbpedia-link">🌐 <a href="${esc(dbpediaLink)}" target="_blank" rel="noopener noreferrer">${t.dbpedia_link}</a></p>`);
+  }
+  
+  // Si hay items de DBpedia, crear la sección
+  if (dbpediaItems.length > 0) {
+    dbpediaHtml = `<div class="card-dbpedia">
+      <div class="card-dbpedia-header">🌐 ${t.dbpedia_info}</div>
+      <div class="card-dbpedia-content">${dbpediaItems.join("")}</div>
+    </div>`;
+  }
+
+  // Relaciones
   const rels = [];
   if (e.seLlegaPor?.length)
     rels.push(`<p class="card-extra card-rel">🚌 ${t.how_to_get}: ${e.seLlegaPor.map(esc).join(", ")}</p>`);
@@ -298,8 +484,6 @@ function renderCard(e, t) {
     rels.push(`<p class="card-extra card-rel">📌 ${t.held_at}: ${e.seRealizaEn.map(esc).join(", ")}</p>`);
   if (e.ofreceGastronomia?.length)
     rels.push(`<p class="card-extra card-rel">🍽️ ${t.offers_food}: ${e.ofreceGastronomia.map(esc).join(", ")}</p>`);
-  if (e.tieneAtractivo?.length)
-    rels.push(`<p class="card-extra card-rel">🌟 Atractivos: ${e.tieneAtractivo.map(esc).join(", ")}</p>`);
 
   return `
     <article class="result-card" style="--accent:${color}">
@@ -307,13 +491,14 @@ function renderCard(e, t) {
         <span class="card-icon">${icon}</span>
         <div class="card-clase">${esc(claseLabel)}</div>
       </div>
+      ${imageHtml}
       <h3 class="card-nombre">${esc(e.nombre || "Sin nombre")}</h3>
       ${e.ubicacion   ? `<p class="card-ubicacion">📍 ${esc(e.ubicacion)}</p>` : ""}
       ${e.descripcion ? `<p class="card-descripcion">${esc(e.descripcion)}</p>` : ""}
       ${badges.length ? `<div class="card-badges">${badges.join("")}</div>` : ""}
-      ${extras.length || rels.length
-          ? `<div class="card-extras">${extras.join("")}${rels.join("")}</div>`
-          : ""}
+      ${extras.length ? `<div class="card-extras">${extras.join("")}</div>` : ""}
+      ${rels.length   ? `<div class="card-extras card-rels">${rels.join("")}</div>` : ""}
+      ${dbpediaHtml}
     </article>`;
 }
 
@@ -321,13 +506,17 @@ function renderCard(e, t) {
 // BÚSQUEDA PRINCIPAL
 // ============================================================
 async function doSearch(q) {
-  const query = (typeof q==="string" && q.trim()) ? q.trim() : input.value.trim();
+  const query = (typeof q==="string" && q.trim()) ? q.trim() : (input ? input.value.trim() : "");
   const t = i18n[currentLang];
-  if (!query) { resultsEl.innerHTML=""; emptyState.style.display="flex"; return; }
+  if (!query) { 
+    if (resultsEl) resultsEl.innerHTML=""; 
+    if (emptyState) emptyState.style.display="flex"; 
+    return; 
+  }
 
-  hideSuggestions();
-  emptyState.style.display = "none";
-  resultsEl.innerHTML = `<div class="loading"><div class="loading-spinner"></div><span>${t.loading}</span></div>`;
+  if (suggestBox) hideSuggestions();
+  if (emptyState) emptyState.style.display = "none";
+  if (resultsEl) resultsEl.innerHTML = `<div class="loading"><div class="loading-spinner"></div><span>${t.loading}</span></div>`;
 
   try {
     const resp = await fetch(`${BASE_URL}?q=${encodeURIComponent(query)}`, {
@@ -335,31 +524,42 @@ async function doSearch(q) {
     });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const owlText    = await resp.text();
+    
+    // LOG DE DEPURACIÓN
+    console.log(`📄 XML recibido para "${query}" (${owlText.length} bytes)`);
+    
     const resultados = parseOWL(owlText);
 
     if (resultados.length === 0) {
-      resultsEl.innerHTML = `
-        <div class="no-results">
-          <span class="no-results-icon">🔭</span>
-          <p>${t.noResults} <strong>"${esc(query)}"</strong></p>
-          <p class="no-results-sub">${t.try}</p>
-        </div>`;
+      if (resultsEl) {
+        resultsEl.innerHTML = `
+          <div class="no-results">
+            <span class="no-results-icon">🔭</span>
+            <p>${t.noResults} <strong>"${esc(query)}"</strong></p>
+            <p class="no-results-sub">${t.try}</p>
+          </div>`;
+      }
       return;
     }
 
-    resultsEl.innerHTML = resultados.map(e => renderCard(e, t)).join("");
-    resultsEl.querySelectorAll(".result-card").forEach((card, i) => {
-      card.style.animationDelay = `${i * 50}ms`;
-      card.classList.add("card-enter");
-    });
+    if (resultsEl) {
+      resultsEl.innerHTML = resultados.map(e => renderCard(e, t)).join("");
+      resultsEl.querySelectorAll(".result-card").forEach((card, i) => {
+        card.style.animationDelay = `${i * 50}ms`;
+        card.classList.add("card-enter");
+      });
+    }
     document.querySelector(".results-section")?.scrollIntoView({ behavior:"smooth", block:"start" });
   } catch (err) {
     console.error("Error:", err);
-    resultsEl.innerHTML = `
-      <div class="no-results">
-        <span class="no-results-icon">❌</span>
-        <p>Error de conexión. ¿El servidor está corriendo en localhost:3000?</p>
-      </div>`;
+    if (resultsEl) {
+      resultsEl.innerHTML = `
+        <div class="no-results">
+          <span class="no-results-icon">❌</span>
+          <p>Error de conexión. ¿El servidor está corriendo en localhost:3000?</p>
+          <p class="no-results-sub">${err.message}</p>
+        </div>`;
+    }
   }
 }
 
@@ -370,7 +570,7 @@ async function doRealtimeSearch(prefijo) {
   const query = prefijo.trim();
   const t = i18n[currentLang];
   if (!query || query.length < 2) {
-    if (!query) { emptyState.style.display="flex"; resultsEl.innerHTML=""; }
+    if (!query && emptyState) { emptyState.style.display="flex"; if(resultsEl) resultsEl.innerHTML=""; }
     return;
   }
   try {
@@ -378,14 +578,17 @@ async function doRealtimeSearch(prefijo) {
       headers: { Accept:"application/rdf+xml" }
     });
     if (!resp.ok) return;
-    const resultados = parseOWL(await resp.text());
+    const owlText = await resp.text();
+    const resultados = parseOWL(owlText);
     if (!resultados.length) return;
-    emptyState.style.display = "none";
-    resultsEl.innerHTML = resultados.map(e => renderCard(e, t)).join("");
-    resultsEl.querySelectorAll(".result-card").forEach((card, i) => {
-      card.style.animationDelay = `${i * 50}ms`;
-      card.classList.add("card-enter");
-    });
+    if (emptyState) emptyState.style.display = "none";
+    if (resultsEl) {
+      resultsEl.innerHTML = resultados.map(e => renderCard(e, t)).join("");
+      resultsEl.querySelectorAll(".result-card").forEach((card, i) => {
+        card.style.animationDelay = `${i * 50}ms`;
+        card.classList.add("card-enter");
+      });
+    }
   } catch (err) {
     console.error("Error tiempo real:", err);
   }
@@ -412,24 +615,16 @@ function norm(s) {
 function getLocalSuggestions(prefijo) {
   const np = norm(prefijo);
   const local = [
-    // Categorías español
-    "museos","hospedaje","parques","restaurantes","establecimientos","gastronomia",
-    "transporte","eventos","ferias","gratuitos","accesibles","arqueologico","cultural",
-    // Categorías inglés
-    "museums","hotels","parks","restaurants","food","transport","events","free",
-    // Categorías italiano
-    "musei","alloggi","parchi","ristoranti","trasporto","gratuito",
-    // Nombres de instancias comunes
-    "Cristo de la Concordia","Laguna Alalay","Parque Nacional Tunari","Parque Kanata",
-    "Parque de la Familia","Parque Cretácico de Sacaba","Palacio Portales",
-    "Catedral Metropolitana","Museo Arqueológico UMSS","Silpancho","Pique Macho",
-    "Chicharrón Cochabambino","Chicha Cochabambina","El Palacio del Silpancho",
-    "Globos","Martínez","Don de Fer","Hotel Cochabamba","Gran Hotel Cochabamba",
+    "museos","hospedaje","parques","restaurantes","gastronomia","transporte","eventos",
+    "gratuitos","accesibles","arqueologico","cultural","museums","hotels","parks",
+    "Cristo de la Concordia","Laguna Alalay","Parque Nacional Tunari","Palacio Portales",
+    "Catedral Metropolitana","Silpancho","Pique Macho"
   ];
   return local.filter(s => norm(s).includes(np)).slice(0, 6);
 }
 
 function showSuggestions(sugs) {
+  if (!suggestBox) return;
   if (!sugs.length) { hideSuggestions(); return; }
   currentSugIdx = -1;
   suggestBox.innerHTML = sugs.map((s, i) =>
@@ -443,7 +638,7 @@ function showSuggestions(sugs) {
     li.addEventListener("mousedown", e => {
       e.preventDefault();
       const val = li.dataset.val;
-      input.value = val;
+      if (input) input.value = val;
       hideSuggestions();
       clearTimeout(realtimeTimeout);
       clearTimeout(suggestTimeout);
@@ -453,26 +648,16 @@ function showSuggestions(sugs) {
 }
 
 function hideSuggestions() {
-  suggestBox.style.display = "none";
+  if (suggestBox) suggestBox.style.display = "none";
   currentSugIdx = -1;
-}
-
-function navigateSuggestions(dir) {
-  const items = suggestBox.querySelectorAll(".suggest-item");
-  if (!items.length) return;
-  items[currentSugIdx]?.classList.remove("suggest-item--active");
-  currentSugIdx = (currentSugIdx + dir + items.length + 1) % (items.length + 1) - 1;
-  if (currentSugIdx >= 0) {
-    items[currentSugIdx].classList.add("suggest-item--active");
-    input.value = items[currentSugIdx].dataset.val;
-  }
 }
 
 // ============================================================
 // CHIPS DE BÚSQUEDA RÁPIDA
 // ============================================================
 function initChips() {
-  document.querySelectorAll(".chip").forEach(chip => {
+  const chips = document.querySelectorAll(".chip");
+  chips.forEach(chip => {
     if (chip._handler) chip.removeEventListener("click", chip._handler);
     const handler = () => {
       let query = chip.dataset.query;
@@ -480,7 +665,7 @@ function initChips() {
         const textSpan = chip.querySelector('.chip-text');
         if (textSpan) query = textSpan.textContent.trim().toLowerCase();
       }
-      if (query) {
+      if (query && input) {
         input.value = query;
         hideSuggestions();
         clearTimeout(realtimeTimeout);
@@ -496,45 +681,42 @@ function initChips() {
 // ============================================================
 // EVENTOS DE INPUT
 // ============================================================
-input.addEventListener("input", () => {
-  clearTimeout(suggestTimeout);
-  clearTimeout(realtimeTimeout);
-  const q = input.value.trim();
-  if (q.length < 2) {
-    hideSuggestions();
-    if (!q) { emptyState.style.display="flex"; resultsEl.innerHTML=""; }
-    return;
-  }
-  suggestTimeout = setTimeout(async () => {
-    const sugs = await fetchSuggestions(q);
-    showSuggestions(sugs);
-  }, 200);
-  realtimeTimeout = setTimeout(() => {
-    if (input.value.trim().length >= 2) doRealtimeSearch(input.value.trim());
-  }, 500);
-});
+if (input) {
+  input.addEventListener("input", () => {
+    clearTimeout(suggestTimeout);
+    clearTimeout(realtimeTimeout);
+    const q = input.value.trim();
+    if (q.length < 2) {
+      hideSuggestions();
+      if (!q && emptyState) { emptyState.style.display="flex"; if(resultsEl) resultsEl.innerHTML=""; }
+      return;
+    }
+    suggestTimeout = setTimeout(async () => {
+      const sugs = await fetchSuggestions(q);
+      showSuggestions(sugs);
+    }, 200);
+    realtimeTimeout = setTimeout(() => {
+      if (input.value.trim().length >= 2) doRealtimeSearch(input.value.trim());
+    }, 500);
+  });
 
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    clearTimeout(realtimeTimeout); clearTimeout(suggestTimeout);
-    hideSuggestions(); doSearch();
-  } else if (e.key === "ArrowDown") {
-    e.preventDefault();
-    suggestBox.style.display==="none"
-      ? fetchSuggestions(input.value).then(showSuggestions)
-      : navigateSuggestions(1);
-  } else if (e.key === "ArrowUp") {
-    e.preventDefault(); navigateSuggestions(-1);
-  } else if (e.key === "Escape") {
-    hideSuggestions();
-  }
-});
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      clearTimeout(realtimeTimeout); clearTimeout(suggestTimeout);
+      hideSuggestions(); doSearch();
+    } else if (e.key === "Escape") {
+      hideSuggestions();
+    }
+  });
 
-input.addEventListener("blur", () => setTimeout(hideSuggestions, 150));
+  input.addEventListener("blur", () => setTimeout(hideSuggestions, 150));
+}
 
-btn.addEventListener("click", () => {
-  clearTimeout(realtimeTimeout); clearTimeout(suggestTimeout); doSearch();
-});
+if (btn) {
+  btn.addEventListener("click", () => {
+    clearTimeout(realtimeTimeout); clearTimeout(suggestTimeout); doSearch();
+  });
+}
 
 // ============================================================
 // INIT
@@ -569,7 +751,10 @@ if (document.readyState === 'loading') {
   function go(idx) {
     cur = (idx + n) % n;
     track.style.transform = `translateX(-${cur*100}%)`;
-    dotsEl?.querySelectorAll(".dot").forEach((d,i) => d.classList.toggle("active", i===cur));
+    if (dotsEl) {
+      const dots = dotsEl.querySelectorAll(".dot");
+      dots.forEach((d,i) => d.classList.toggle("active", i===cur));
+    }
     resetTimer();
   }
 
@@ -585,10 +770,13 @@ if (document.readyState === 'loading') {
     if (Math.abs(diff) > 50) go(diff>0 ? cur+1 : cur-1);
   }, { passive:true });
 
-  document.getElementById("prev")?.addEventListener("click", () => go(cur-1));
-  document.getElementById("next")?.addEventListener("click", () => go(cur+1));
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  if (prevBtn) prevBtn.addEventListener("click", () => go(cur-1));
+  if (nextBtn) nextBtn.addEventListener("click", () => go(cur+1));
 
   if (n > 0) resetTimer();
 })();
 
-console.log("✅ Buscador Semántico listo - Trilingüe Español/Inglés/Italiano");
+console.log("✅ Buscador Semántico listo - Conectado a DBpedia y Wikipedia");
+console.log("🌐 Trilingüe Español/Inglés/Italiano");
