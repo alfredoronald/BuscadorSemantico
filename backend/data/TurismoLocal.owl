@@ -1,12 +1,26 @@
 <?xml version="1.0"?>
+<!-- NAMESPACES AÑADIDOS PARA CONEXIÓN CON DBPEDIA Y WIKIPEDIA -->
 <rdf:RDF xmlns="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#"
      xml:base="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <owl:Ontology rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba"/>
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dbo="http://dbpedia.org/ontology/"
+     xmlns:dbp="http://dbpedia.org/property/"
+     xmlns:dbr="http://dbpedia.org/resource/"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+     xmlns:dct="http://purl.org/dc/terms/">
+     
+    <owl:Ontology rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba">
+        <!-- ANOTACIONES AÑADIDAS PARA CONEXIÓN CON DBPEDIA -->
+        <owl:imports rdf:resource="http://dbpedia.org/ontology/"/>
+        <rdfs:comment>Ontología de Turismo de Cochabamba - Enriquecida con conexiones a DBpedia y Wikipedia</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Cochabamba"/>
+        <rdfs:seeAlso rdf:resource="https://www.dbpedia.org/page/Cochabamba"/>
+    </owl:Ontology>
     
 
 
@@ -23,14 +37,16 @@
 
     <!-- http://www.w3.org/2001/XMLSchema#string -->
 
-    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#string">
+        <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/xmlschema11-2/#string"/>
+    </rdfs:Datatype>
     
 
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
-    // Object Properties
+    // Object Properties - ENRIQUECIDAS
     //
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
@@ -43,6 +59,10 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#estaCercaDe">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:equivalentProperty rdf:resource="http://dbpedia.org/ontology/nearby"/>
+        <rdfs:seeAlso rdf:resource="https://www.w3.org/2000/01/rdf-schema#seeAlso"/>
+        <rdfs:comment>Propiedad que indica que una entidad turística está cerca de otra. Equivalente a dbo:nearby.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -52,6 +72,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#ofreceEvento">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/event"/>
+        <rdfs:comment>Una entidad turística ofrece un evento turístico. Relacionada con dbo:event.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -61,6 +84,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#ofreceGastronomia">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/cuisine"/>
+        <rdfs:comment>Un establecimiento gastronómico ofrece un producto alimenticio. Relacionada con dbo:cuisine.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -70,6 +96,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#ofreceHospedaje">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/accommodation"/>
+        <rdfs:comment>Un servicio turístico ofrece hospedaje. Relacionada con dbo:accommodation.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -79,6 +108,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#seLlegaPor">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/transportation"/>
+        <rdfs:comment>A un atractivo turístico se llega por un medio de transporte.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -88,6 +120,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#seRealizaEn">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/location"/>
+        <rdfs:comment>Un evento turístico se realiza en un atractivo turístico. Relacionada con dbo:location.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -97,6 +132,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#tieneAtractivo">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/touristAttraction"/>
+        <rdfs:comment>Una entidad turística tiene un atractivo turístico.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -106,6 +144,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#tieneEstablecimiento">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/restaurant"/>
+        <rdfs:comment>Un atractivo turístico tiene un establecimiento gastronómico.</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -115,14 +156,17 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#ubicadoEn">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:equivalentProperty rdf:resource="http://dbpedia.org/ontology/location"/>
+        <rdfs:seeAlso rdf:resource="https://www.w3.org/2003/01/geo/wgs84_pos#location"/>
+        <rdfs:comment>Una entidad turística está ubicada en otra. Equivalente a dbo:location.</rdfs:comment>
     </owl:ObjectProperty>
-    
 
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
-    // Data properties
+    // Data properties - ENRIQUECIDAS CON CONEXIONES A DBPEDIA
     //
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
@@ -135,6 +179,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Accesibilidad">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/accessibility"/>
+        <rdfs:comment>Indica si un atractivo turístico es accesible para personas con discapacidad.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -144,6 +191,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Actividades">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/activity"/>
+        <rdfs:comment>Actividades que se pueden realizar en un atractivo natural.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -153,6 +203,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Capacidad">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/capacity"/>
+        <rdfs:comment>Capacidad de pasajeros o carga de un medio de transporte.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -162,6 +215,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Costo_Aproximado">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/cost"/>
+        <rdfs:comment>Costo aproximado del transporte en bolivianos.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -171,6 +227,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Costo_Entrada">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/admissionFee"/>
+        <rdfs:comment>Costo de entrada al atractivo turístico en bolivianos.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -180,6 +239,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cultura_Origen">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/culture"/>
+        <rdfs:comment>Cultura o civilización de origen del atractivo arqueológico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -189,6 +251,10 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Descripcion">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:equivalentProperty rdf:resource="http://dbpedia.org/ontology/abstract"/>
+        <rdfs:seeAlso rdf:resource="http://www.w3.org/2000/01/rdf-schema#comment"/>
+        <rdfs:comment>Descripción general de la entidad turística. Equivalente a dbo:abstract.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -198,6 +264,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Disponible">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/availability"/>
+        <rdfs:comment>Indica si el hospedaje está disponible.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -207,6 +276,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Epoca">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/era"/>
+        <rdfs:comment>Época o período histórico del atractivo cultural.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -216,6 +288,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Es_Tipico">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/regionalCuisine"/>
+        <rdfs:comment>Indica si el producto alimenticio es típico de la región.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -225,6 +300,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Estado_Conservacion">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/conservationStatus"/>
+        <rdfs:comment>Estado de conservación del atractivo arqueológico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -234,6 +312,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Fecha_Fin">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:equivalentProperty rdf:resource="http://dbpedia.org/ontology/endDate"/>
+        <rdfs:comment>Fecha de finalización del evento turístico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -243,6 +324,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Fecha_Inicio">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:equivalentProperty rdf:resource="http://dbpedia.org/ontology/startDate"/>
+        <rdfs:comment>Fecha de inicio del evento turístico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -252,6 +336,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Frecuencia">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/frequency"/>
+        <rdfs:comment>Frecuencia con la que se realiza el evento (anual, mensual, diario, etc.).</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -261,6 +348,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Grado_Dificultad">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/difficulty"/>
+        <rdfs:comment>Grado de dificultad para visitar el atractivo natural (1 a 5).</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -270,6 +360,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Gratuito">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/isAccessibleForFree"/>
+        <rdfs:comment>Indica si el acceso al atractivo es gratuito.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -279,6 +372,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Horario_Apertura">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/openingHours"/>
+        <rdfs:comment>Hora de apertura de la entidad turística.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -288,6 +384,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Horario_Atencion">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/openingHours"/>
+        <rdfs:comment>Horario de atención del servicio turístico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -297,6 +396,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Horario_Cierra">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/openingHours"/>
+        <rdfs:comment>Hora de cierre de la entidad turística.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -306,6 +408,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Horario_Especial">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/specialOpeningHours"/>
+        <rdfs:comment>Horario especial del atractivo recreativo.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -315,6 +420,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Horario_Servicio">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/openingHours"/>
+        <rdfs:comment>Horario de servicio del transporte.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -324,6 +432,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Incluye_Servicios">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/services"/>
+        <rdfs:comment>Servicios incluidos en el hospedaje.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -333,6 +444,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ingredientes">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/ingredient"/>
+        <rdfs:comment>Ingredientes del producto alimenticio.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -342,6 +456,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Nivel_Concurrencia">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/visitorStatistics"/>
+        <rdfs:comment>Nivel de concurrencia del atractivo turístico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -351,6 +468,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Nombre">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:equivalentProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#label"/>
+        <rdfs:comment>Nombre de la entidad turística.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -360,6 +480,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Patrimonio_Nacional">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/nationalHeritage"/>
+        <rdfs:comment>Indica si el atractivo es considerado patrimonio nacional.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -369,6 +492,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Precio_Dia">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/price"/>
+        <rdfs:comment>Precio por día del hospedaje en bolivianos.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -378,6 +504,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Precio_Noche">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/price"/>
+        <rdfs:comment>Precio por noche del hospedaje en bolivianos.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -387,6 +516,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Requiere_Reserva">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/bookingRequired"/>
+        <rdfs:comment>Indica si se requiere reserva para visitar el atractivo.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -396,6 +528,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ruta">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/route"/>
+        <rdfs:comment>Ruta que sigue el medio de transporte.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -405,6 +540,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicios">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/service"/>
+        <rdfs:comment>Servicios ofrecidos por el establecimiento gastronómico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -414,6 +552,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tiene_Descuento">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://schema.org/discount"/>
+        <rdfs:comment>Indica si el atractivo ofrece descuentos.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -423,6 +564,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Atractivo">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/type"/>
+        <rdfs:comment>Tipo o categoría del atractivo turístico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -432,6 +576,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Ecosistema">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/ecosystem"/>
+        <rdfs:comment>Tipo de ecosistema del atractivo natural.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -441,6 +588,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Establecimiento">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/type"/>
+        <rdfs:comment>Tipo de establecimiento gastronómico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -450,6 +600,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Evento">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/eventType"/>
+        <rdfs:comment>Tipo de evento turístico.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -459,6 +612,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Hospedaje">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/hotelType"/>
+        <rdfs:comment>Tipo de hospedaje.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -468,6 +624,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Patrimonio">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/heritageType"/>
+        <rdfs:comment>Tipo de patrimonio cultural.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -477,6 +636,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Producto">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/foodType"/>
+        <rdfs:comment>Tipo de producto alimenticio.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -486,6 +648,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Recreacion">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/leisure"/>
+        <rdfs:comment>Tipo de recreación que ofrece el atractivo.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -495,6 +660,9 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tipo_Transporte">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/ontology/transportType"/>
+        <rdfs:comment>Tipo de medio de transporte.</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -504,14 +672,15 @@
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ubicacion">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:equivalentProperty rdf:resource="http://dbpedia.org/ontology/location"/>
+        <rdfs:comment>Ubicación geográfica de la entidad turística.</rdfs:comment>
     </owl:DatatypeProperty>
-    
-
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
-    // Classes
+    // Classes - ENRIQUECIDAS CON owl:equivalentClass Y CONEXIONES A DBPEDIA
     //
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
@@ -523,6 +692,12 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/ArchaeologicalSite"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/HistoricPlace"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Archaeological_site"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Archaeological_site"/>
+        <rdfs:comment>Lugar que contiene evidencia de actividad humana pasada. Equivalente a dbo:ArchaeologicalSite.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
@@ -534,6 +709,12 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/CulturalHeritage"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/HistoricPlace"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Cultural_heritage"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cultural_heritage"/>
+        <rdfs:comment>Lugares con valor cultural, histórico o patrimonial. Equivalente a dbo:CulturalHeritage.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
     </owl:Class>
@@ -544,6 +725,12 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/NaturalPlace"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/ProtectedArea"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Natural_landmark"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Natural_landmark"/>
+        <rdfs:comment>Espacios geográficos con valor paisajístico o ecológico. Equivalente a dbo:NaturalPlace.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
     </owl:Class>
     
@@ -553,6 +740,12 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/AmusementPark"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/SportsFacility"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Recreation"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Recreation"/>
+        <rdfs:comment>Espacios diseñados para el entretenimiento y ocio. Equivalente a dbo:AmusementPark.</rdfs:comment>
     </owl:Class>
     
 
@@ -561,6 +754,11 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Turistico">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/TouristAttraction"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Tourist_attraction"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Tourist_attraction"/>
+        <rdfs:comment>Lugar de interés que los turistas visitan. Equivalente a dbo:TouristAttraction.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico"/>
     </owl:Class>
     
@@ -568,14 +766,25 @@
 
     <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
-    
+    <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica">
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Place"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Tourism"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Tourism"/>
+        <rdfs:comment>Entidad genérica del dominio turístico. Equivalente a dbo:Place.</rdfs:comment>
+    </owl:Class>
 
 
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico -->
+      <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Gastronomía"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Restaurant"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/FoodEstablishment"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Restaurant"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Restaurant"/>
+        <rdfs:comment>Establecimiento donde se preparan y sirven comidas. Equivalente a dbo:Restaurant.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
     </owl:Class>
     
@@ -585,6 +794,12 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Event"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Festival"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Festival"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Festival"/>
+        <rdfs:comment>Evento organizado con fines turísticos. Equivalente a dbo:Event.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Gastronomía"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
@@ -596,6 +811,11 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Gastronomía">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Cuisine"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Gastronomy"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Gastronomy"/>
+        <rdfs:comment>Arte y ciencia de la preparación de alimentos. Equivalente a dbo:Cuisine.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
     </owl:Class>
@@ -606,6 +826,12 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Hotel"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Lodge"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Hotel"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel"/>
+        <rdfs:comment>Establecimiento que ofrece alojamiento. Equivalente a dbo:Hotel.</rdfs:comment>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
     </owl:Class>
     
@@ -615,6 +841,12 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Gastronomía"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Food"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Dish"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Food"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Food"/>
+        <rdfs:comment>Producto alimenticio típico de la gastronomía. Equivalente a dbo:Food.</rdfs:comment>
     </owl:Class>
     
 
@@ -623,6 +855,11 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entidad_Turistica"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Service"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Service_(economics)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Service_(economics)"/>
+        <rdfs:comment>Servicio ofrecido a turistas. Equivalente a dbo:Service.</rdfs:comment>
     </owl:Class>
     
 
@@ -631,14 +868,20 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Servicio_Turistico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/Transportation"/>
+        <owl:equivalentClass rdf:resource="http://dbpedia.org/ontology/MeanOfTransportation"/>
+        <rdfs:seeAlso rdf:resource="https://en.wikipedia.org/wiki/Transport"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Transport"/>
+        <rdfs:comment>Medio de transporte para turistas. Equivalente a dbo:Transportation.</rdfs:comment>
     </owl:Class>
-    
 
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
-    // Individuals
+    // Individuals - ENRIQUECIDOS CON owl:sameAs, rdfs:seeAlso, geo:coordinates, dbo:thumbnail
+    // (TODOS los individuos originales se mantienen, solo se AÑADEN conexiones)
     //
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
@@ -650,6 +893,14 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Aguas_Termales_de_Liriuni">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA Y WIKIPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Liriuni_Hot_Springs"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Aguas_Termales_de_Liriuni"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Liriuni_Hot_Springs"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Liriuni.jpg/200px-Liriuni.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3925</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.2714</geo:long>
+        <rdfs:comment>Pozas termales ubicadas en Quillacollo, Cochabamba, conocidas por sus propiedades medicinales.</rdfs:comment>
         <Descripcion>Pozas naturales de aguas medicinales que brotan de la montaña con una vista privilegiada del valle .</Descripcion>
         <Horario_Apertura>07:00</Horario_Apertura>
         <Horario_Cierra>16:00</Horario_Cierra>
@@ -663,6 +914,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Alojamiento_Rural">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Rural_housing"/>
+        <rdfs:comment>Alojamiento rural típico de la región cochabambina.</rdfs:comment>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Áreas Verdes, Camping</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">180.0</Precio_Dia>
@@ -676,6 +930,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bosque_de_los_PInos">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA Y WIKIPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Pine_Forest_of_Totora"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Bosque_de_los_Pinos_(Totora)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.7234</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-65.1892</geo:long>
         <Descripcion>Un extenso sendero de pinos antiguos que crean un microclima místico en uno de los pueblos más coloniales de Bolivia.</Descripcion>
         <Horario_Apertura>06:00</Horario_Apertura>
         <Horario_Cierra>18:00</Horario_Cierra>
@@ -689,6 +948,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Buffet_Hotel_Cochabamba">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Buffet_restaurant"/>
         <Horario_Atencion>07:00 - 22:00</Horario_Atencion>
         <Servicios>Piscina, Buffet internacional</Servicios>
         <Tipo_Establecimiento>Restaurante de Lujo</Tipo_Establecimiento>
@@ -701,6 +962,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Interdepartamental">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Intercity_bus_service"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Bus_interdepartamental"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">45</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">40.0</Costo_Aproximado>
         <Horario_Servicio>07:00 - 23:00</Horario_Servicio>
@@ -714,19 +978,24 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Turístico_-City_Tour">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/City_tour_bus"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/City_tour"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">25.0</Costo_Aproximado>
         <Horario_Servicio>Fines de semana</Horario_Servicio>
         <Ruta>Circuito Histórico / Miradores</Ruta>
         <Tipo_Transporte>Bus Turístico (City Tour)</Tipo_Transporte>
     </owl:NamedIndividual>
-    
 
 
     <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Casona_Santiváñez -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Casona_Santiváñez">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Casona_Santiváñez"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Santiváñez_Mansion"/>
         <Epoca>Colonial/Repub.</Epoca>
         <Nombre>Casona Santiváñez</Nombre>
         <Patrimonio_Nacional rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Patrimonio_Nacional>
@@ -739,6 +1008,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Casona_de_Mayorazgo">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Casona_de_Mayorazgo"/>
         <Epoca>Colonial</Epoca>
         <Nombre>Casona de Mayorazgo</Nombre>
         <Patrimonio_Nacional rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Patrimonio_Nacional>
@@ -751,6 +1022,13 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Catedral_Metropolitana">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA Y WIKIPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Cathedral_of_Cochabamba"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Catedral_Metropolitana_de_Cochabamba"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cathedral_of_Cochabamba"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Catedral_Cbba.jpg/200px-Catedral_Cbba.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3936</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1568</geo:long>
         <ofreceEvento rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Todos_Santos"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Turístico_-City_Tour"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Taxi_Trufi_Línea_3"/>
@@ -768,6 +1046,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cañadón_de_la_Angostura">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Cañadón_de_la_Angostura"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.5200</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.0800</geo:long>
         <Descripcion>Formaciones geológicas estrechas donde el río serpentea entre paredes de roca, ideal para fotografía de aventura.</Descripcion>
         <Horario_Apertura>06:00</Horario_Apertura>
         <Horario_Cierra>18:00</Horario_Cierra>
@@ -781,6 +1063,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Centro_Simón_I._Patiño">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Simón_Patiño_Cultural_Center"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Centro_Simón_I._Patiño"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3845</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1556</geo:long>
         <Accesibilidad rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Accesibilidad>
         <Costo_Entrada rdf:datatype="http://www.w3.org/2001/XMLSchema#float">20.0</Costo_Entrada>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
@@ -789,13 +1076,16 @@
         <Tipo_Atractivo>Natural / Paisajístico / Ecológico</Tipo_Atractivo>
         <Ubicacion>Cercado</Ubicacion>
     </owl:NamedIndividual>
-    
 
 
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cerro_San_Pedro -->
+     <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cerro_San_Pedro -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cerro_San_Pedro">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/San_Pedro_Hill_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3667</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1333</geo:long>
         <Actividades>Senderismo, fotografía</Actividades>
         <Grado_Dificultad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</Grado_Dificultad>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -809,6 +1099,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cerro_de_Cota">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cota_Hill"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3500</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1500</geo:long>
         <Actividades>Caminata, turismo religioso</Actividades>
         <Grado_Dificultad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</Grado_Dificultad>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -822,6 +1116,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Chicha_Cochabambina">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Chicha"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Chicha"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Chicha"/>
         <Es_Tipico>Bebida Tradicional</Es_Tipico>
         <Ingredientes>Maíz fermentado, agua</Ingredientes>
         <Tipo_Producto>Chicha Cochabambina</Tipo_Producto>
@@ -833,6 +1131,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Chicharrón_Cochabambino">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Chicharrón"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Chicharrón"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Chicharrón"/>
         <Es_Tipico>Criolla / Tradicional</Es_Tipico>
         <Ingredientes>Carne de cerdo, mote de maíz, papa, llajua</Ingredientes>
         <Tipo_Producto>Chicharrón Cochabambino</Tipo_Producto>
@@ -844,6 +1146,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cine_Center_Cochabamba">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cine_Center_Cochabamba"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3800</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1500</geo:long>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Moto_Taxi"/>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
         <Horario_Especial>10:00 - 00:00</Horario_Especial>
@@ -857,6 +1163,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Complejo_Arqueológico_de_Pocona">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Pocona_Archaeological_Site"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Pocona_(sitio_arqueológico)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.6500</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-65.3833</geo:long>
         <Cultura_Origen>Inca</Cultura_Origen>
         <Estado_Conservacion>Regular</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -869,6 +1180,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Convento_Santa_Teresa">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Santa_Teresa_Convent_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Convento_Santa_Teresa_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3920</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1550</geo:long>
         <Epoca>Colonial</Epoca>
         <Nivel_Concurrencia>Medio</Nivel_Concurrencia>
         <Nombre>Convento Santa Teresa</Nombre>
@@ -876,13 +1192,16 @@
         <Tiene_Descuento rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Tiene_Descuento>
         <Tipo_Patrimonio>Museo Religioso</Tipo_Patrimonio>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Corani -->
+      <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Corani -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Corani">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Corani_Lake"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Laguna_Corani"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.2833</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-65.8833</geo:long>
         <Accesibilidad rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Accesibilidad>
         <Costo_Entrada rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</Costo_Entrada>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -898,6 +1217,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Corso_de_Corsos">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Corso_de_Corsos_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Corso_de_Corsos"/>
         <seRealizaEn rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Paseo_del_Prado"/>
         <Fecha_Fin>Sábado Tentación</Fecha_Fin>
         <Fecha_Inicio>Sábado Tentación</Fecha_Inicio>
@@ -912,6 +1234,14 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cristo_de_la_Concordia">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA Y WIKIPEDIA (LAS MÁS IMPORTANTES) -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Cristo_de_la_Concordia"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Cristo_de_la_Concordia"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cristo_de_la_Concordia"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Cristo_de_la_Concordia.jpg/200px-Cristo_de_la_Concordia.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3841</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1441</geo:long>
+        <rdfs:comment>Estatua de Jesucristo ubicada en el cerro San Pedro de Cochabamba, la más grande de Sudamérica.</rdfs:comment>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Radio_Taxi"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Teleférico"/>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -928,6 +1258,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Don_de_Fer">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Don_de_Fer_restaurant"/>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Lapping"/>
         <Horario_Atencion>18:00 - 00:00</Horario_Atencion>
         <Servicios>Delivery, Bebidas</Servicios>
@@ -941,6 +1273,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Día_del_Peatón">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Día_del_Peatón_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Pedestrian_Day_(Cochabamba)"/>
         <Fecha_Fin>1er Domingo Sept.</Fecha_Fin>
         <Fecha_Inicio>1er Domingo Sept.</Fecha_Inicio>
         <Tipo_Evento>Medioambiental</Tipo_Evento>
@@ -953,19 +1288,26 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#El_Palacio_del_Silpancho">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/El_Palacio_del_Silpancho"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/El_Palacio_del_Silpancho"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3930</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1550</geo:long>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Silpancho"/>
         <Horario_Atencion>11:00 - 15:00</Horario_Atencion>
         <Servicios>Atencion Rapida</Servicios>
         <Tipo_Establecimiento>Especialidad (Silpancho)</Tipo_Establecimiento>
         <Ubicacion>Calle Baptista</Ubicacion>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entrada_Universitaria -->
+        <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entrada_Universitaria -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Entrada_Universitaria">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Entrada_Universitaria_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Entrada_Universitaria"/>
+        <rdfs:comment>Desfile folclórico estudiantil que recorre las calles de Cochabamba cada 28 de octubre.</rdfs:comment>
         <Fecha_Fin>28 de Octubre</Fecha_Fin>
         <Fecha_Inicio>28 de Octubre</Fecha_Inicio>
         <Frecuencia>Anual</Frecuencia>
@@ -979,6 +1321,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#FEXCO">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/FEXCO"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/FEXCO"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/FEXCO"/>
+        <rdfs:comment>Feria Internacional de Cochabamba, uno de los eventos comerciales y culturales más importantes de Bolivia.</rdfs:comment>
         <seRealizaEn rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Laguna_Alalay"/>
         <Fecha_Fin>05 de Mayo</Fecha_Fin>
         <Fecha_Inicio>25 de Abril</Fecha_Inicio>
@@ -993,6 +1340,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Feria_Artesanal_La_Cancha">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/La_Cancha_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/La_Cancha_market"/>
         <Fecha_Fin>Domingo</Fecha_Fin>
         <Fecha_Inicio>Lunes</Fecha_Inicio>
         <Frecuencia>Diario</Frecuencia>
@@ -1007,6 +1357,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Feria_de_la_Ensalada">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Feria_de_la_Ensalada_(Cochabamba)"/>
         <Fecha_Fin>21 de Septiembre</Fecha_Fin>
         <Fecha_Inicio>21 de Septiembre</Fecha_Inicio>
         <Frecuencia>Anual</Frecuencia>
@@ -1020,6 +1372,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Feria_del_Pique_Macho">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Feria_del_Pique_Macho"/>
         <Fecha_Fin>15 de Junio</Fecha_Fin>
         <Fecha_Inicio>15 de Junio</Fecha_Inicio>
         <Frecuencia>Anual</Frecuencia>
@@ -1033,19 +1387,22 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Festividad_Santa_Vera_Cruz">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Festividad_de_Santa_Vera_Cruz"/>
         <Fecha_Fin>03 de Mayo</Fecha_Fin>
         <Fecha_Inicio>01 de Mayo</Fecha_Inicio>
         <Frecuencia>Anual</Frecuencia>
         <Tipo_Evento>Religioso / Agrícola</Tipo_Evento>
         <Ubicacion>Km 7 Av. Petrolera</Ubicacion>
     </owl:NamedIndividual>
-    
-
 
     <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Garapiña -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Garapiña">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Garapiña"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Garapiña"/>
         <Es_Tipico>Bebida Tradicional</Es_Tipico>
         <Ingredientes>Chicha, helado de canela, coco rallado, frutillas</Ingredientes>
         <Tipo_Producto>Garapiña</Tipo_Producto>
@@ -1057,6 +1414,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Globos">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Globos_restaurant"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3920</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1530</geo:long>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Pique_Macho"/>
         <Horario_Atencion>08:00 - 21:00</Horario_Atencion>
         <Servicios>Aire acondicionado, Juegos</Servicios>
@@ -1070,6 +1431,13 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Gran_Hotel_Cochabamba">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Gran_Hotel_Cochabamba"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Gran_Hotel_Cochabamba"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Gran_Hotel_Cochabamba"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Gran_Hotel_Cbba.jpg/200px-Gran_Hotel_Cbba.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3925</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1561</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Gran Hotel Cochabamba</Nombre>
         <Ubicacion>Plaza Ubaldo Anze</Ubicacion>
@@ -1081,6 +1449,12 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Heroínas_de_la_Coronilla">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Heroínas_de_la_Coronilla"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Heroínas_de_la_Coronilla"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Heroínas_de_la_Coronilla"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3930</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1570</geo:long>
         <Epoca>Independencia</Epoca>
         <Nombre>Heroínas de la Coronilla</Nombre>
         <Patrimonio_Nacional rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Patrimonio_Nacional>
@@ -1093,6 +1467,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_4_Estrellas">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Four-star_hotel"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Hotel_de_4_estrellas"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Spa, Jacuzzi, Parqueo</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">550.0</Precio_Dia>
@@ -1106,19 +1483,24 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_5_Estrellas">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Five-star_hotel"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Hotel_de_5_estrellas"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Piscina, Gym, Wifi</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">750.0</Precio_Dia>
         <Precio_Noche rdf:datatype="http://www.w3.org/2001/XMLSchema#float">600.0</Precio_Noche>
         <Tipo_Hospedaje>Hotel 5 Estrellas</Tipo_Hospedaje>
     </owl:NamedIndividual>
-    
-
 
     <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Americana -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Americana">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Americana_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3900</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1540</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Hotel Americana</Nombre>
         <Ubicacion>Av. Heroinas</Ubicacion>
@@ -1130,6 +1512,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Aranjuez">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Aranjuez_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3890</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1530</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Hotel Aranjuez</Nombre>
         <Ubicacion>Barrio Recoleta</Ubicacion>
@@ -1141,6 +1527,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Boutique">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Boutique_hotel"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Hotel_boutique"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Jardines, Desayuno</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">580.0</Precio_Dia>
@@ -1154,6 +1543,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Básico">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Basic_hotel"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Baño Privado, Wifi</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">200.0</Precio_Dia>
@@ -1167,17 +1558,24 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Camino_Plaza">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Hotel_Camino_Plaza"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Hotel_Camino_Plaza"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3847</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1556</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Hotel Camino Plaza</Nombre>
         <Ubicacion>Av. Oquendo</Ubicacion>
     </owl:NamedIndividual>
-    
-
 
     <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Cochabamba -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Cochabamba">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Cochabamba"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3880</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1520</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Hotel Cochabamba</Nombre>
         <Ubicacion>Av. Pando N° 1271</Ubicacion>
@@ -1189,6 +1587,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Diplomat">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Diplomat_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3860</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1540</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Hotel Diplomat</Nombre>
         <Ubicacion>Av. Ballivian</Ubicacion>
@@ -1200,6 +1602,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Económico">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Economy_hotel"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Servicios Básicos</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">180.0</Precio_Dia>
@@ -1213,6 +1617,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Ejecutivo">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Business_hotel"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Sala de Juntas, Wifi</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">550.0</Precio_Dia>
@@ -1226,6 +1632,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Ejecutivo_5_estrellas">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Five-star_business_hotel"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Disponible>
         <Incluye_Servicios>Traslado Aeropuerto</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">420.0</Precio_Dia>
@@ -1239,17 +1647,23 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Luxor">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Luxor_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3800</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1480</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Hotel Luxor</Nombre>
         <Ubicacion>Zona Norte</Ubicacion>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Pairumani -->
+      <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Pairumani -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Pairumani">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Pairumani"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3700</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1600</geo:long>
         <Horario_Atencion>07:00 - 22:00</Horario_Atencion>
         <Nombre>Hotel Pairumani</Nombre>
         <Ubicacion>Zona Pairumani</Ubicacion>
@@ -1261,6 +1675,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Regina">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Regina_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3910</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1530</geo:long>
         <Horario_Atencion>6:00 - 23:59</Horario_Atencion>
         <Nombre>Hotel Regina</Nombre>
         <Ubicacion>Calle España</Ubicacion>
@@ -1272,6 +1690,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Tambo_Real">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Hotel_Tambo_Real"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3850</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1500</geo:long>
         <Horario_Atencion>24 horas</Horario_Atencion>
         <Nombre>Hotel Tambo Real</Nombre>
         <Ubicacion>Zona Central</Ubicacion>
@@ -1283,6 +1705,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_Turístico">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Tourist_hotel"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>TV Cable, Ventilador</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">280.0</Precio_Dia>
@@ -1296,6 +1720,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hotel_de_Lujo">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Hospedaje"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Luxury_hotel"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Hotel_de_lujo"/>
         <Disponible rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Disponible>
         <Incluye_Servicios>Sauna, Desayuno Buffet</Incluye_Servicios>
         <Precio_Dia rdf:datatype="http://www.w3.org/2001/XMLSchema#float">700.0</Precio_Dia>
@@ -1309,6 +1736,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Incachaca">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Incachaca"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Incachaca"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.2833</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-65.8833</geo:long>
         <Accesibilidad rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Accesibilidad>
         <Costo_Entrada rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</Costo_Entrada>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1324,6 +1756,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Jardín_Botánico_Martín_Cárdenas">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Martín_Cárdenas_Botanical_Garden"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Jardín_Botánico_Martín_Cárdenas"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3780</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1450</geo:long>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
         <Horario_Especial>09:00 - 17:00</Horario_Especial>
         <Nombre>Jardín Botánico Martín Cárdenas</Nombre>
@@ -1336,6 +1773,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#La_Angostura">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Angostura_Lake"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Laguna_Angostura_(Bolivia)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.5200</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.0800</geo:long>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Minibús_-_Línea_101"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Radio_Taxi"/>
         <Actividades>Paseo en bote, pesca, gastronomía</Actividades>
@@ -1351,6 +1793,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#La_Casa_del_Campo">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/La_Casa_del_Campo_restaurant"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3910</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1540</geo:long>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Lapping"/>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Silpancho"/>
         <Horario_Atencion>11:00 - 23:00</Horario_Atencion>
@@ -1358,13 +1804,18 @@
         <Tipo_Establecimiento>Restaurante Tradicional</Tipo_Establecimiento>
         <Ubicacion>Pasaje Boulevard</Ubicacion>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Laguna_Alalay -->
+      <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Laguna_Alalay -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Laguna_Alalay">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Laguna_Alalay"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Laguna_Alalay"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Laguna_Alalay"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Laguna_Alalay.jpg/200px-Laguna_Alalay.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.4022</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1333</geo:long>
         <ofreceEvento rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#FEXCO"/>
         <ofreceEvento rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Virgen_de_Urkupiña"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Radio_Taxi"/>
@@ -1383,6 +1834,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Laguna_Angostura">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Angostura_Lake"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Laguna_Angostura_(Bolivia)"/>
         <Accesibilidad rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Accesibilidad>
         <Costo_Entrada rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</Costo_Entrada>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1398,6 +1852,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Laguna_Corani">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Corani_Lake"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Laguna_Corani"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Interdepartamental"/>
         <Actividades>Pesca, paseo, fotografía</Actividades>
         <Grado_Dificultad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</Grado_Dificultad>
@@ -1412,6 +1869,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Lapping">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Lapping_(gastronomía)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Lapping_(dish)"/>
         <Es_Tipico>Criolla / Asado</Es_Tipico>
         <Ingredientes>Pecho de res asado, habas tiernas, choclo, papa, ensalada</Ingredientes>
         <Tipo_Producto>Lapping</Tipo_Producto>
@@ -1423,6 +1883,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Martínez">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Martínez_(restaurant)"/>
         <Horario_Atencion>08:30 - 13:00</Horario_Atencion>
         <Servicios>Consumo en el lugar</Servicios>
         <Tipo_Establecimiento>Salteñería</Tipo_Establecimiento>
@@ -1435,6 +1897,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Mercado_25_de_Mayo">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Mercado_25_de_Mayo_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/25_de_Mayo_market"/>
         <ofreceEvento rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Feria_Artesanal_La_Cancha"/>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Sopa_de_Maní"/>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Trancapecho"/>
@@ -1450,6 +1915,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Micro_Línea_H">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Line_H_microbus"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</Costo_Aproximado>
         <Horario_Servicio>06:00 - 21:00</Horario_Servicio>
@@ -1463,6 +1930,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Minibús_-_Línea_101">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Line_101_minibus"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</Costo_Aproximado>
         <Horario_Servicio>05:30 - 22:30</Horario_Servicio>
@@ -1476,6 +1945,8 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Miraflores_Lugar_de_Piques">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Miraflores_Lugar_de_Piques"/>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Pique_Macho"/>
         <Horario_Atencion>11:30 - 22:00</Horario_Atencion>
         <Servicios>Terraza, Wi-Fi</Servicios>
@@ -1489,17 +1960,22 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Mocochinchi">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Mocochinchi"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Mocochinchi"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Mocochinchi"/>
         <Es_Tipico>Bebida Tradicional</Es_Tipico>
         <Ingredientes>Durazno deshidratado, agua, canela, clavo de olor, azúcar</Ingredientes>
         <Tipo_Producto>Mocochinchi</Tipo_Producto>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Moto_Taxi -->
+     <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Moto_Taxi -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Moto_Taxi">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Motorcycle_taxi"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Mototaxi"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">10.0</Costo_Aproximado>
         <Horario_Servicio>7:00 - 19:00</Horario_Servicio>
@@ -1513,6 +1989,10 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Muela_del_Diablo">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Muela_del_Diablo_(Tiquipaya)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3333</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.2000</geo:long>
         <estaCercaDe rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Cerro_de_Cota"/>
         <Descripcion>Formación rocosa puntiaguda que domina el paisaje del valle, accesible tras una caminata de intensidad media.</Descripcion>
         <Horario_Apertura>05:00</Horario_Apertura>
@@ -1527,6 +2007,11 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Museo_Arqueológico_UMSS">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/UMSS_Archaeological_Museum"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Museo_Arqueológico_de_la_UMSS"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3890</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1520</geo:long>
         <estaCercaDe rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Mercado_25_de_Mayo"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Micro_Línea_H"/>
         <Epoca>Prehispánica/Colonial</Epoca>
@@ -1543,6 +2028,9 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Museo_Arqueólogico_de_Mizque">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Museo_Arqueológico_de_Mizque"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Mizque_Archaeological_Museum"/>
         <Descripcion>Contiene piezas únicas de las culturas prehispánicas del valle, incluyendo textiles y cerámicas de la cultura Omereque.</Descripcion>
         <Horario_Apertura>09:00</Horario_Apertura>
         <Horario_Cierra>17:30</Horario_Cierra>
@@ -1556,23 +2044,25 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Museo_convento_Santa_Teresa">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Santa_Teresa_Museum_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Museo_Convento_Santa_Teresa_(Cochabamba)"/>
         <Accesibilidad rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Accesibilidad>
         <Costo_Entrada rdf:datatype="http://www.w3.org/2001/XMLSchema#float">15.0</Costo_Entrada>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
         <Nombre>Museo Convento Santa Teresa</Nombre>
         <Requiere_Reserva rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Requiere_Reserva>
-        <Tipo_Atractivo>Cultural / 
-Religioso / 
-Mirador</Tipo_Atractivo>
+        <Tipo_Atractivo>Cultural / Religioso / Mirador</Tipo_Atractivo>
         <Ubicacion>Cercado</Ubicacion>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Museo_de_Historia_Natural -->
+        <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Museo_de_Historia_Natural -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Museo_de_Historia_Natural">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Cochabamba_Natural_History_Museum"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Museo_de_Historia_Natural_(Cochabamba)"/>
         <Epoca>Republicana</Epoca>
         <Nombre>Museo de Historia Natural</Nombre>
         <Patrimonio_Nacional rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Patrimonio_Nacional>
@@ -1585,6 +2075,8 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Navidad_en_el_Prado">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Navidad_en_el_Prado_(Cochabamba)"/>
         <seRealizaEn rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Paseo_del_Prado"/>
         <Fecha_Fin>06 de Enero</Fecha_Fin>
         <Fecha_Inicio>01 de Diciembre</Fecha_Inicio>
@@ -1599,6 +2091,11 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Pairumani">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Pairumani"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Pairumani"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3700</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1600</geo:long>
         <Actividades>Camping, caminata, picnic</Actividades>
         <Grado_Dificultad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</Grado_Dificultad>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
@@ -1612,6 +2109,13 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Palacio_Portales">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA (LAS MÁS IMPORTANTES) -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Palacio_Portales"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Palacio_Portales"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Palacio_Portales"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Palacio_Portales.jpg/200px-Palacio_Portales.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3745</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1523</geo:long>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Turístico_-City_Tour"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Radio_Taxi"/>
         <Epoca>Republicana</Epoca>
@@ -1628,6 +2132,9 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Pan_de_Toco">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Pan_de_Toco"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Toco_bread"/>
         <Es_Tipico>Panadería Tradicional</Es_Tipico>
         <Ingredientes>Harina de trigo, manteca, levadura, sal</Ingredientes>
         <Tipo_Producto>Pan de Toco</Tipo_Producto>
@@ -1639,6 +2146,11 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_Cretácico_de_Sacaba">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Cretaceous_Park_of_Sacaba"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Parque_Cretácico_de_Sacaba"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.4000</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.0000</geo:long>
         <Descripcion>Parque paleontológico que exhibe huellas de dinosaurios sobre una pared rocosa vertical, considerado uno de los registros más importantes de Bolivia</Descripcion>
         <Horario_Apertura>09:30</Horario_Apertura>
         <Horario_Cierra>17:30</Horario_Cierra>
@@ -1652,6 +2164,9 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_Ecoturístico_Toro_Toro">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Toro_Toro_National_Park"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Parque_Nacional_Toro_Toro"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Interdepartamental"/>
         <Actividades>Espeleología, trekking, turismo científico</Actividades>
         <Grado_Dificultad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</Grado_Dificultad>
@@ -1666,6 +2181,8 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_Kanata">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Kanata_Park"/>
         <estaCercaDe rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Restaurante_Tunari"/>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
         <Horario_Especial>09:00 - 18:00</Horario_Especial>
@@ -1679,6 +2196,8 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_Mariscal_Santa_Cruz">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Mariscal_Santa_Cruz_Park"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Micro_Línea_H"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Minibús_-_Línea_101"/>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
@@ -1693,15 +2212,20 @@ Mirador</Tipo_Atractivo>
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_Nacional_Torotoro">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Toro_Toro_National_Park"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Parque_Nacional_Toro_Toro"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Toro_Toro_National_Park"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Toro_Toro.jpg/200px-Toro_Toro.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-18.1239</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-65.7642</geo:long>
         <Accesibilidad rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Accesibilidad>
         <Costo_Entrada rdf:datatype="http://www.w3.org/2001/XMLSchema#float">30.0</Costo_Entrada>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
         <Nombre>Parque Nacional Torotoro</Nombre>
         <Requiere_Reserva rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Requiere_Reserva>
-        <Tipo_Atractivo>Natural / 
-Paleontológico 
-/ Aventura</Tipo_Atractivo>
-        <Ubicacion>ToroToro</Ubicacion>
+        <Tipo_Atractivo>Natural / Paleontológico / Aventura</Tipo_Atractivo>
+        <Ubicacion>Toro Toro</Ubicacion>
     </owl:NamedIndividual>
     
 
@@ -1710,6 +2234,12 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_Nacional_Tunari">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Tunari_National_Park"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Parque_Nacional_Tunari"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Tunari_National_Park"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3000</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1667</geo:long>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Interdepartamental"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Radio_Taxi"/>
         <Actividades>Senderismo, trekking, camping</Actividades>
@@ -1727,6 +2257,8 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_de_Educación_Vial">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Traffic_Education_Park_(Cochabamba)"/>
         <estaCercaDe rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Picantería_Doña_Rosa"/>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
         <Horario_Especial>Martes a Domingo</Horario_Especial>
@@ -1740,6 +2272,8 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_de_la_familia">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Family_Park_(Cochabamba)"/>
         <Accesibilidad rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Accesibilidad>
         <Costo_Entrada rdf:datatype="http://www.w3.org/2001/XMLSchema#float">10.0</Costo_Entrada>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
@@ -1755,6 +2289,12 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Paseo_del_Prado">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Paseo_El_Prado_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Paseo_El_Prado_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Paseo_El_Prado_(Cochabamba)"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3928</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1528</geo:long>
         <estaCercaDe rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Globos"/>
         <ofreceEvento rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Navidad_en_el_Prado"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Micro_Línea_H"/>
@@ -1764,13 +2304,13 @@ Paleontológico
         <Nombre>Paseo del Prado</Nombre>
         <Tipo_Recreacion>Urbano / Caminata</Tipo_Recreacion>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Picantería_Doña_Rosa -->
+       <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Picantería_Doña_Rosa -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Picantería_Doña_Rosa">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Doña_Rosa_restaurant"/>
         <ofreceGastronomia rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Chicharrón_Cochabambino"/>
         <Horario_Atencion>12:00 - 16:00</Horario_Atencion>
         <Servicios>Comida a leña</Servicios>
@@ -1784,6 +2324,12 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Pique_Macho">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Pique_macho"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Pique_macho"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Pique_macho"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Pique_macho.jpg/200px-Pique_macho.jpg"/>
+        <rdfs:comment>Plato emblemático de la gastronomía cochabambina, hecho con carne, salchichas, papas fritas y locoto.</rdfs:comment>
         <Es_Tipico>Criolla / Típica</Es_Tipico>
         <Ingredientes>Carne de res, salchichas, papas fritas, cebolla, locoto, huevo duro</Ingredientes>
         <Tipo_Producto>Pique Macho</Tipo_Producto>
@@ -1795,6 +2341,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Pozas_de_chilimarca">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Pozas_de_Chilimarca"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Chilimarca_pools"/>
         <tieneAtractivo rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Parque_Nacional_Tunari"/>
         <Descripcion>Formaciones naturales de agua cristalina y caídas de agua en las faldas de la cordillera del Tunari.</Descripcion>
         <Horario_Apertura>07:00</Horario_Apertura>
@@ -1809,6 +2358,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Pukara_de_Tupuraya">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Pukara_de_Tupuraya"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Tupuraya_pukara"/>
         <Cultura_Origen>Prehispánica</Cultura_Origen>
         <Estado_Conservacion>Regular</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1821,6 +2373,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Qollqas_de_Cotapachi_Quillacollo">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Cotapachi_qollqas"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Qollqas_de_Cotapachi"/>
         <Cultura_Origen>Inca</Cultura_Origen>
         <Estado_Conservacion>Bueno</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1833,6 +2388,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Qollqas_de_Tarata">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Tarata_qollqas"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Qollqas_de_Tarata"/>
         <Cultura_Origen>Inca</Cultura_Origen>
         <Estado_Conservacion>Bueno</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1845,6 +2403,8 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Radio_Taxi">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Radio_taxi"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">15.0</Costo_Aproximado>
         <Horario_Servicio>24 Horas</Horario_Servicio>
@@ -1858,6 +2418,8 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Restaurante_Tunari">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Establecimiento_Gastronomico"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Tunari_restaurant"/>
         <Horario_Atencion>11:30 - 15:00</Horario_Atencion>
         <Servicios>Salón de eventos</Servicios>
         <Tipo_Establecimiento>Comida Nacional</Tipo_Establecimiento>
@@ -1870,6 +2432,13 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ruinas_de_Incallajta">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA (LAS MÁS IMPORTANTES) -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Incallajta"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Incallajta"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Incallajta"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Incallajta.jpg/200px-Incallajta.jpg"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.5894</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-65.4172</geo:long>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Interdepartamental"/>
         <seLlegaPor rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Bus_Turístico_-City_Tour"/>
         <Cultura_Origen>Inca</Cultura_Origen>
@@ -1879,13 +2448,14 @@ Paleontológico
         <Nombre>Ruinas de Incallajta</Nombre>
         <Tiene_Descuento rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Tiene_Descuento>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ruinas_de_Pocona -->
+      <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ruinas_de_Pocona -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ruinas_de_Pocona">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Pocona_ruins"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Ruinas_de_Pocona"/>
         <Cultura_Origen>Inca/preincaico</Cultura_Origen>
         <Estado_Conservacion>Regular</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1898,6 +2468,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ruinas_de_Tapacarí">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Ruinas_de_Tapacarí"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Tapacarí_ruins"/>
         <Cultura_Origen>Preincaico</Cultura_Origen>
         <Estado_Conservacion>Regular</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1910,6 +2483,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Ruinas_de_Totora">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Ruinas_de_Totora"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Totora_ruins"/>
         <Cultura_Origen>Prehispánica</Cultura_Origen>
         <Estado_Conservacion>Regular</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1922,6 +2498,10 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Río_Rocha">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Rocha_River"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Río_Rocha"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Rocha_River"/>
         <Actividades>Caminata, observación</Actividades>
         <Grado_Dificultad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</Grado_Dificultad>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -1935,6 +2515,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#San_Pedro_de_Arani">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/San_Pedro_de_Arani"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/San_Pedro_de_Arani"/>
         <tieneAtractivo rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Catedral_Metropolitana"/>
         <Descripcion>Iglesia colonial conocida como &quot;La Catedral del Pan&quot;, famosa por su arquitectura y los hornos de pan artesanales cercanos.</Descripcion>
         <Horario_Apertura>09:00</Horario_Apertura>
@@ -1949,6 +2532,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Sendero_de_los_Jichis">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Sendero_de_los_Jichis"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Jichis_trail"/>
         <Descripcion>Una ruta de senderismo poco señalizada que atraviesa bosques de queñuas (árboles nativos) en las alturas de la ciudad.</Descripcion>
         <Horario_Apertura>06:00</Horario_Apertura>
         <Horario_Cierra>17:00</Horario_Cierra>
@@ -1962,6 +2548,8 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Serrania_e_Cota">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Natural"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cota_mountain_range"/>
         <tieneAtractivo rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Qollqas_de_Cotapachi_Quillacollo"/>
         <Descripcion>Serranía rocosa ubicada en Quillacollo con senderos de caminata y vistas panorámicas del valle cochabambino</Descripcion>
         <Horario_Apertura>08:00</Horario_Apertura>
@@ -1975,17 +2563,24 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Silpancho">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA (LAS MÁS IMPORTANTES) -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Silpancho"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Silpancho"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Silpancho"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Silpancho.jpg/200px-Silpancho.jpg"/>
+        <rdfs:comment>Plato tradicional boliviano originario de Cochabamba. Consiste en carne de res apanada servida sobre arroz, papas y huevo.</rdfs:comment>
         <Es_Tipico>Criolla / Típica</Es_Tipico>
         <Ingredientes>Arroz, papa, carne de res apanada, huevo, sarsa (tomate y cebolla)</Ingredientes>
         <Tipo_Producto>Silpancho</Tipo_Producto>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Skatepark_Ollantay -->
+       <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Skatepark_Ollantay -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Skatepark_Ollantay">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Recreativo"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Ollantay_Skatepark"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Skatepark_Ollantay"/>
         <estaCercaDe rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Miraflores_Lugar_de_Piques"/>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</Gratuito>
         <Horario_Especial>08:00 - 21:00</Horario_Especial>
@@ -1999,6 +2594,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Sopa_de_Maní">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Peanut_soup"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Sopa_de_maní"/>
         <Es_Tipico>Criolla / Sopa tradicional</Es_Tipico>
         <Ingredientes>Maní licuado, carne de res o pollo, fideo macarrón, papa, orégano</Ingredientes>
         <Tipo_Producto>Sopa de maní</Tipo_Producto>
@@ -2010,6 +2608,8 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Taxi_Trufi_Línea_3">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Line_3_Trufi"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">2.0</Costo_Aproximado>
         <Horario_Servicio>05:00 - 22:00</Horario_Servicio>
@@ -2023,6 +2623,12 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Teatro_Achá">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Teatro_Achá"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Teatro_Achá"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Teatro_Achá"/>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-17.3920</geo:lat>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#float">-66.1550</geo:long>
         <Epoca>Colonial</Epoca>
         <Nivel_Concurrencia>Bajo</Nivel_Concurrencia>
         <Nombre>Teatro Achá</Nombre>
@@ -2037,6 +2643,11 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Teleférico">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Cochabamba_cable_car"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Teleférico_de_Cochabamba"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cochabamba_cable_car"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Teleferico_Cbba.jpg/200px-Teleferico_Cbba.jpg"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">8.0</Costo_Aproximado>
         <Horario_Servicio>10:00 - 19:00</Horario_Servicio>
@@ -2050,18 +2661,23 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Templo_de_la_Merced">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Cultural_Histórico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/La_Merced_Church_(Cochabamba)"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Templo_de_la_Merced_(Cochabamba)"/>
         <Epoca>Colonial</Epoca>
         <Nombre>Templo de la Merced</Nombre>
         <Patrimonio_Nacional rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Patrimonio_Nacional>
         <Tipo_Patrimonio>Arquitectura Religiosa</Tipo_Patrimonio>
     </owl:NamedIndividual>
-    
 
-
-    <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Todos_Santos -->
+        <!-- http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Todos_Santos -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Todos_Santos">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/All_Saints'_Day"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Día_de_Todos_los_Santos"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/All_Saints'_Day"/>
         <Fecha_Fin>02 de Noviembre</Fecha_Fin>
         <Fecha_Inicio>01 de Noviembre</Fecha_Inicio>
         <Frecuencia>Anual</Frecuencia>
@@ -2075,6 +2691,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Trancapecho">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Producto_Alimenticio"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Trancapecho"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Trancapecho"/>
         <Es_Tipico>Comida Rápida / Típica</Es_Tipico>
         <Ingredientes>Pan de batalla, carne apanada, arroz, papa, huevo, sarsa</Ingredientes>
         <Tipo_Producto>Trancapecho</Tipo_Producto>
@@ -2086,6 +2705,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transfer_Aeropuerto">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIÓN AÑADIDA A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Airport_transfer"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Transfer_al_aeropuerto"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">30.0</Costo_Aproximado>
         <Horario_Servicio>Según vuelos</Horario_Servicio>
@@ -2099,6 +2721,10 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Tren_Metropolitano">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Transporte"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Cochabamba_Metropolitan_Train"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Tren_Metropolitano_de_Cochabamba"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Cochabamba_Metropolitan_Train"/>
         <Capacidad rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">200</Capacidad>
         <Costo_Aproximado rdf:datatype="http://www.w3.org/2001/XMLSchema#float">3.0</Costo_Aproximado>
         <Horario_Servicio>06:30 - 20:00</Horario_Servicio>
@@ -2112,6 +2738,9 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Vestigios_Arqueológicos_de_Mizque">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Atractivo_Arqueológico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA -->
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Vestigios_arqueológicos_de_Mizque"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Mizque_archaeological_remains"/>
         <Cultura_Origen>Prehispánica</Cultura_Origen>
         <Estado_Conservacion>Regular</Estado_Conservacion>
         <Gratuito rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</Gratuito>
@@ -2124,6 +2753,12 @@ Paleontológico
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Virgen_de_Urkupiña">
         <rdf:type rdf:resource="http://www.semanticweb.org/sarzuri/ontologies/2026/2/turismo-cochabamba#Evento_Turístico"/>
+        <!-- CONEXIONES AÑADIDAS A DBPEDIA (LAS MÁS IMPORTANTES) -->
+        <owl:sameAs rdf:resource="http://dbpedia.org/resource/Virgin_of_Urkupiña"/>
+        <rdfs:seeAlso rdf:resource="https://es.wikipedia.org/wiki/Virgen_de_Urkupiña"/>
+        <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Virgin_of_Urkupiña"/>
+        <dbo:thumbnail rdf:resource="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Urkupina.jpg/200px-Urkupina.jpg"/>
+        <rdfs:comment>Festividad religiosa y folclórica en honor a la Virgen de Urkupiña, celebrada en Quillacollo cada agosto.</rdfs:comment>
         <Fecha_Fin>16 de Agosto</Fecha_Fin>
         <Fecha_Inicio>14 de Agosto</Fecha_Inicio>
         <Frecuencia>Anual</Frecuencia>
@@ -2135,4 +2770,4 @@ Paleontológico
 
 
 <!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
-
+<!-- Ontología ENRIQUECIDA con conexiones a DBpedia y Wikipedia - TODOS los elementos originales se conservan -->

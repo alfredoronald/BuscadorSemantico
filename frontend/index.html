@@ -131,7 +131,7 @@
             <ul id="suggestBox" class="suggest-box" style="display:none"></ul>
           </div>
 
-          <!-- CHIPS TRILINGÜES (Español / English / Italiano) -->
+          <!-- CHIPS TRILINGÜES -->
           <div class="quick-chips">
             <button class="chip" data-query="museos">
               <span class="chip-icon">🏛️</span>
@@ -173,17 +173,19 @@
         </div>
       </div>
 
+      <!-- SECCIÓN DE RESULTADOS (CORREGIDA: resultados DENTRO de esta sección) -->
+      <section class="results-section">
+        <div id="resultados" class="results-grid"></div>
+        
+        <!-- EMPTY STATE DENTRO DE LA MISMA SECCIÓN (CORREGIDO) -->
+        <div class="empty-state" id="emptyState" style="display: flex;">
+          <div class="empty-icon">◈</div>
+          <p>Ingresa un término para explorar la ontología</p>
+          <p class="empty-sub">Enter a term to explore the ontology</p>
+        </div>
+      </section>
+
     </main>
-
-    <section class="results-section">
-      <div id="resultados" class="results-grid"></div>
-    </section>
-
-    <div class="empty-state" id="emptyState">
-      <div class="empty-icon">◈</div>
-      <p>Ingresa un término para explorar la ontología</p>
-      <p class="empty-sub">Enter a term to explore the ontology</p>
-    </div>
 
     <footer class="site-footer">
       <div class="footer-inner">

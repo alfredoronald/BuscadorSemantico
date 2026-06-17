@@ -577,6 +577,96 @@ body {
   gap: 4px;
 }
 
+/* ============================================
+   NUEVAS CLASES PARA DBPEDIA (AÑADIDAS)
+   ============================================ */
+.card-dbpedia {
+  background: rgba(196, 90, 26, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  margin-top: 8px;
+  border-left: 2px solid var(--clr-accent);
+}
+
+.card-dbpedia-header {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--clr-accent);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-dbpedia-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.card-dbpedia-abstract {
+  font-size: 0.55rem;
+  color: var(--clr-muted);
+  line-height: 1.4;
+}
+
+.card-dbpedia-coords {
+  font-size: 0.55rem;
+}
+
+.card-dbpedia-coords a,
+.card-dbpedia-wiki a,
+.card-dbpedia-link a {
+  color: var(--clr-accent);
+  text-decoration: none;
+  font-size: 0.55rem;
+}
+
+.card-dbpedia-coords a:hover,
+.card-dbpedia-wiki a:hover,
+.card-dbpedia-link a:hover {
+  text-decoration: underline;
+}
+
+.card-dbpedia-wiki {
+  margin-top: 2px;
+}
+
+.card-dbpedia-link {
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(196, 90, 26, 0.3);
+}
+
+.card-dbpedia-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Imagen de DBpedia */
+.card-image {
+  margin: 8px 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: auto;
+  max-height: 140px;
+  object-fit: cover;
+  transition: transform var(--trans);
+}
+
+.card-image img:hover {
+  transform: scale(1.02);
+}
+
+/* ============================================ */
+
 .empty-state {
   position: relative;
   z-index: 5;
